@@ -124,3 +124,4 @@ This guide provides step-by-step verification procedures for manual on-device te
 4. Re-enable network connectivity.
 5. In Settings -> Accounts, tap **Sync now**.
 6. Verify daily totals upload cleanly in a single batch (<= 500 rows) with zero data loss.
+

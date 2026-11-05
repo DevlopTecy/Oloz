@@ -101,3 +101,4 @@ The state machine is verified using deterministic scripted sequences in Kotlin u
 | **Facebook Reels** | v450.0.0.34.108+ | Android 13, 14, 15 | 19 / 20 detected (±1) | Marked **Supported**; requires prominent disclosure enabled. |
 
 *Hardware pending note:* Where testing in novel OEM variants (e.g. MIUI / ColorOS / OneUI aggressive background power profiles) is underway, refer to `docs/manual-tests.md` for manual verification instructions.
+

@@ -90,3 +90,4 @@ In accordance with §15, every dependency in `pubspec.yaml` is justified below:
 | `supabase_flutter` | Authentication and cross-device sync engine with Row Level Security. |
 | `intl` | Date formatting, locale-aware number formatting, and weekday labels. |
 | `very_good_analysis` | Enterprise-grade linting and static analysis rules to enforce code hygiene. |
+

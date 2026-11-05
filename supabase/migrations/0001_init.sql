@@ -61,3 +61,4 @@ create policy "own rows" on public.user_settings
 -- Performance indices for range queries and rollups
 create index idx_daily_totals_user_day on public.daily_totals(user_id, day);
 create index idx_devices_user on public.devices(user_id);
+

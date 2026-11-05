@@ -79,3 +79,4 @@ Oloz does not knowingly collect personally identifiable information from childre
 For questions or feedback regarding this Privacy Policy:
 - **Email**: privacy@oloz.app
 - **Repository**: https://github.com/oloz/oloz
+
