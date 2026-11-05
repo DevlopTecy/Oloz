@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Oloz</string>
+    <string name="accessibility_service_description">Oloz uses Accessibility Service strictly to detect scroll events in short-form video players (Instagram, TikTok, YouTube Shorts, Facebook Reels) to help you track reels scrolled. Oloz never reads your messages, searches, accounts, or personal text content.</string>
+</resources>
+

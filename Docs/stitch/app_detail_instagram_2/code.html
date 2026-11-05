@@ -1,0 +1,173 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#241a00", "primary-fixed-dim": "#b6c4ff", "bg-app": "#F6F5F2", "on-surface-variant": "#444651", "warning": "#E6C27A", "tertiary": "#745b00", "error": "#ba1a1a", "on-tertiary-container": "#4f3d00", "surface-container": "#eceef4", "surface-dim": "#d8dae0", "text-primary": "#23262B", "error-container": "#ffdad6", "on-error-container": "#93000a", "outline": "#757682", "outline-variant": "#c5c5d3", "inverse-surface": "#2e3136", "primary": "#3e57a7", "inverse-primary": "#b6c4ff", "secondary-fixed-dim": "#feb59a", "danger": "#D98A8A", "tertiary-fixed": "#ffe08c", "border-subtle": "#E4E2DC", "on-secondary-fixed-variant": "#6b3925", "success": "#7FB69A", "surface-tint": "#415aaa", "on-primary-fixed": "#00164e", "background": "#f8f9ff", "on-surface": "#191c21", "primary-soft": "#E3E8F8", "inverse-on-surface": "#eff0f7", "surface-container-low": "#f2f3fa", "on-secondary": "#ffffff", "surface-muted": "#EEEDE9", "on-secondary-container": "#79452f", "surface": "#FFFFFF", "surface-variant": "#e1e2e9", "on-background": "#191c21", "on-tertiary": "#ffffff", "secondary-fixed": "#ffdbce", "on-secondary-fixed": "#350f02", "tertiary-container": "#cda72f", "surface-bright": "#f8f9ff", "on-primary": "#ffffff", "surface-container-lowest": "#ffffff", "secondary-container": "#feb59a", "secondary": "#88503a", "surface-container-high": "#e6e8ef", "on-tertiary-fixed-variant": "#584400", "surface-container-highest": "#e1e2e9", "on-primary-fixed-variant": "#274190", "on-error": "#ffffff", "primary-container": "#5870c2", "accent-soft": "#FBE9E1", "primary-fixed": "#dce1ff", "tertiary-fixed-dim": "#eac249", "on-primary-container": "#fffbff", "text-secondary": "#6E727A" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "1rem", "space-xl": "1.5rem", "margin-desktop": "2rem", "space-3xl": "3rem", "gutter-desktop": "1.5rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-2xl": "2rem", "space-lg": "1rem", "space-sm": "0.5rem", "margin": "1.25rem" }, "fontFamily": { "display-lg": ["Inter"], "caption-default": ["Inter"], "title-md": ["Inter"], "section-title": ["Inter"], "body-medium": ["Inter"], "display-lg-mobile": ["Inter"], "title-lg": ["Inter"], "caption-tabular": ["Inter"], "body-default": ["Inter"] }, "fontSize": { "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "caption-default": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "section-title": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "body-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "title-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "caption-tabular": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-default": ["14px", { "lineHeight": "20px", "fontWeight": "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#F6F5F2;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-bg-app text-text-primary font-body-default flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-bg-app/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="font-title-md text-title-md text-text-primary tracking-tight">Oloz</span></div><h1 class="font-section-title text-section-title text-text-primary text-center truncate max-w-[140px]">Apps</h1><div class="flex items-center justify-end"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-bg-app"><div class="flex flex-col w-full px-margin pb-6 gap-space-xl">
+<!-- Top Navigation & Header Row -->
+<div class="flex items-center justify-between pt-space-sm">
+<a aria-label="Back to Apps" class="w-10 h-10 rounded-full bg-surface-muted flex items-center justify-center text-text-primary transition-transform active:scale-95 shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</a>
+<div class="flex items-center gap-space-xs px-3 py-1 rounded-full bg-accent-soft text-secondary">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-caption-default text-caption-default font-semibold tracking-wide">Monitored</span>
+</div>
+</div>
+<!-- App Profile Hero Info -->
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-xl shadow-sm bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center flex-shrink-0 text-white p-2">
+<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-sm">
+<h2 class="font-title-lg text-title-lg text-text-primary tracking-tight truncate">Instagram</h2>
+</div>
+<span class="inline-flex items-center text-secondary font-caption-default text-caption-default mt-0.5">
+        Social &amp; Reels
+      </span>
+</div>
+</div>
+<!-- Primary Stat Card: Screen Time Today -->
+<div class="bg-surface rounded-[20px] p-5 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col relative overflow-hidden">
+<div class="flex items-center justify-between mb-1">
+<span class="font-caption-default text-caption-default text-text-secondary tracking-wider uppercase font-semibold">Active Usage</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary font-caption-tabular text-caption-tabular font-medium">−18% vs avg</span>
+</div>
+<div class="flex items-baseline gap-1 my-1">
+<span class="font-display-lg-mobile text-display-lg-mobile text-text-primary tracking-tight font-semibold">1h 48m</span>
+</div>
+<p class="font-caption-default text-caption-default text-text-secondary">
+      Total active screen time today
+    </p>
+<!-- Subtle Calm Ambient Progress Sparkline -->
+<div class="w-full bg-surface-muted h-1 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 58%;"></div>
+</div>
+</div>
+<!-- 7-Day Usage Bar Chart Card -->
+<div class="bg-surface rounded-[20px] p-5 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col">
+<span class="font-caption-default text-caption-default text-text-secondary font-semibold uppercase tracking-wider">Weekly Rhythm</span>
+<span class="font-section-title text-section-title text-text-primary mt-0.5">Daily screen duration</span>
+</div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary px-2.5 py-1 rounded-full bg-surface-muted">Last 7 Days</span>
+</div>
+<!-- 7 Rounded Bars -->
+<div class="flex items-end justify-between h-32 px-2 pb-1 gap-2">
+<!-- Mon -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary-soft rounded-full transition-all group-hover:opacity-80" style="height: 48%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">M</span>
+</div>
+<!-- Tue -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary-soft rounded-full transition-all group-hover:opacity-80" style="height: 65%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">T</span>
+</div>
+<!-- Wed -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary-soft rounded-full transition-all group-hover:opacity-80" style="height: 38%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">W</span>
+</div>
+<!-- Thu -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary-soft rounded-full transition-all group-hover:opacity-80" style="height: 72%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">T</span>
+</div>
+<!-- Fri -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary-soft rounded-full transition-all group-hover:opacity-80" style="height: 84%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">F</span>
+</div>
+<!-- Sat -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary-soft rounded-full transition-all group-hover:opacity-80" style="height: 52%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">S</span>
+</div>
+<!-- Sun (Today: Highlighted) -->
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+<div class="w-full bg-primary rounded-full transition-all group-hover:opacity-90 shadow-[0_2px_8px_rgba(62,87,167,0.25)]" style="height: 62%;"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-primary font-bold">S</span>
+</div>
+</div>
+</div>
+<!-- Side-by-Side Micro Stat Cards -->
+<div class="grid grid-cols-2 gap-space-md">
+<!-- Card 1: Reels Scrolled -->
+<div class="bg-surface rounded-[20px] p-4 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="w-8 h-8 rounded-full bg-accent-soft flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">slow_motion_video</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-accent-soft text-secondary font-caption-tabular text-[10px] font-semibold tracking-wide">
+          REELS
+        </span>
+</div>
+<div>
+<div class="font-title-lg text-title-lg text-text-primary tracking-tight font-semibold">
+          142
+        </div>
+<div class="font-caption-default text-caption-default text-text-secondary mt-0.5">
+          reels scrolled
+        </div>
+</div>
+</div>
+<!-- Card 2: Opens & Pickups -->
+<div class="bg-surface rounded-[20px] p-4 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center text-text-primary">
+<span class="material-symbols-outlined text-[18px]">touch_app</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary font-caption-tabular text-[10px] font-semibold tracking-wide">
+          TODAY
+        </span>
+</div>
+<div>
+<div class="font-title-lg text-title-lg text-text-primary tracking-tight font-semibold">
+          23
+        </div>
+<div class="font-caption-default text-caption-default text-text-secondary mt-0.5">
+          opens / pickups
+        </div>
+</div>
+</div>
+</div>
+<!-- Ambient Mindful Reminder Snippet -->
+<div class="p-4 rounded-[18px] bg-surface-muted flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">spa</span>
+<p class="font-caption-default text-caption-default text-text-secondary">
+      Usage peaks between <span class="text-text-primary font-medium">8:00 PM – 9:30 PM</span>. A pause window can restore balance.
+    </p>
+</div>
+<!-- Bottom Action Section -->
+<div class="mt-2 flex flex-col gap-2">
+<button class="w-full h-12 rounded-[14px] bg-primary text-on-primary font-body-medium text-body-medium flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98] hover:brightness-95" id="set-limit-btn">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+      Set limit
+    </button>
+</div>
+</div>
+<script>
+  // Simple micro-interaction for button feedback and delightful ripple feel
+  const limitBtn = document.getElementById('set-limit-btn');
+  if (limitBtn) {
+    limitBtn.addEventListener('click', () => {
+      const originalText = limitBtn.innerHTML;
+      limitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> Setting limit...';
+      setTimeout(() => {
+        limitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span> Limit configured (2h 00m)';
+        setTimeout(() => {
+          limitBtn.innerHTML = originalText;
+        }, 2000);
+      }, 450);
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_12px_rgba(35,38,43,0.04)]" data-active-classes="bg-primary-soft text-primary font-semibold"><div class="h-16 px-margin flex items-center justify-between"><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full text-text-secondary transition-colors duration-150" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">save_as</span><span class="font-caption-default text-caption-default mt-space-xs">Home</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full text-text-secondary transition-colors duration-150" data-path="reels" href="#"><span class="material-symbols-outlined text-[22px]">slow_motion_video</span><span class="font-caption-default text-caption-default mt-space-xs">Reels</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full transition-colors duration-150 bg-primary-soft text-primary font-semibold" data-path="apps" href="#"><span class="material-symbols-outlined text-[22px]">apps</span><span class="font-caption-default text-caption-default mt-space-xs">Apps</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full text-text-secondary transition-colors duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[22px]">tune</span><span class="font-caption-default text-caption-default mt-space-xs">Settings</span></a></div></nav>
+
+</body></html>

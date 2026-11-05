@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#241a00", "primary-fixed-dim": "#b6c4ff", "bg-app": "#F6F5F2", "on-surface-variant": "#444651", "warning": "#E6C27A", "tertiary": "#745b00", "error": "#ba1a1a", "on-tertiary-container": "#4f3d00", "surface-container": "#eceef4", "surface-dim": "#d8dae0", "text-primary": "#23262B", "error-container": "#ffdad6", "on-error-container": "#93000a", "outline": "#757682", "outline-variant": "#c5c5d3", "inverse-surface": "#2e3136", "primary": "#3e57a7", "inverse-primary": "#b6c4ff", "secondary-fixed-dim": "#feb59a", "danger": "#D98A8A", "tertiary-fixed": "#ffe08c", "border-subtle": "#E4E2DC", "on-secondary-fixed-variant": "#6b3925", "success": "#7FB69A", "surface-tint": "#415aaa", "on-primary-fixed": "#00164e", "background": "#f8f9ff", "on-surface": "#191c21", "primary-soft": "#E3E8F8", "inverse-on-surface": "#eff0f7", "surface-container-low": "#f2f3fa", "on-secondary": "#ffffff", "surface-muted": "#EEEDE9", "on-secondary-container": "#79452f", "surface": "#FFFFFF", "surface-variant": "#e1e2e9", "on-background": "#191c21", "on-tertiary": "#ffffff", "secondary-fixed": "#ffdbce", "on-secondary-fixed": "#350f02", "tertiary-container": "#cda72f", "surface-bright": "#f8f9ff", "on-primary": "#ffffff", "surface-container-lowest": "#ffffff", "secondary-container": "#feb59a", "secondary": "#88503a", "surface-container-high": "#e6e8ef", "on-tertiary-fixed-variant": "#584400", "surface-container-highest": "#e1e2e9", "on-primary-fixed-variant": "#274190", "on-error": "#ffffff", "primary-container": "#5870c2", "accent-soft": "#FBE9E1", "primary-fixed": "#dce1ff", "tertiary-fixed-dim": "#eac249", "on-primary-container": "#fffbff", "text-secondary": "#6E727A" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "1rem", "space-xl": "1.5rem", "margin-desktop": "2rem", "space-3xl": "3rem", "gutter-desktop": "1.5rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-2xl": "2rem", "space-lg": "1rem", "space-sm": "0.5rem", "margin": "1.25rem" }, "fontFamily": { "display-lg": ["Inter"], "caption-default": ["Inter"], "title-md": ["Inter"], "section-title": ["Inter"], "body-medium": ["Inter"], "display-lg-mobile": ["Inter"], "title-lg": ["Inter"], "caption-tabular": ["Inter"], "body-default": ["Inter"] }, "fontSize": { "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "caption-default": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "title-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "section-title": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "body-medium": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "title-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "caption-tabular": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-default": ["14px", { "lineHeight": "20px", "fontWeight": "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#F6F5F2;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-bg-app text-text-primary font-body-default flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-bg-app/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="font-title-md text-title-md text-text-primary tracking-tight">Oloz</span></div><h1 class="font-section-title text-section-title text-text-primary text-center truncate max-w-[140px]">Home</h1><div class="flex items-center justify-end"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-bg-app"><div class="flex flex-col w-full px-margin pb-6 gap-space-xl">
+<!-- Segmented Interval Switcher -->
+<div class="w-full flex justify-center mt-space-sm">
+<div class="bg-surface-muted p-1 rounded-full flex items-center shadow-inner w-full max-w-[320px]">
+<button class="tab-btn flex-1 py-1.5 px-3 rounded-full bg-surface text-text-primary font-caption-default text-caption-default shadow-sm transition-all duration-200 text-center" data-interval="day" type="button">
+        Day
+      </button>
+<button class="tab-btn flex-1 py-1.5 px-3 rounded-full text-text-secondary font-caption-default text-caption-default hover:text-text-primary transition-all duration-200 text-center" data-interval="week" type="button">
+        Week
+      </button>
+<button class="tab-btn flex-1 py-1.5 px-3 rounded-full text-text-secondary font-caption-default text-caption-default hover:text-text-primary transition-all duration-200 text-center" data-interval="month" type="button">
+        Month
+      </button>
+</div>
+</div>
+<!-- Key Metrics Dual Card Grid -->
+<div class="grid grid-cols-2 gap-space-md">
+<!-- Stat 1: Screen Time -->
+<div class="bg-surface rounded-[20px] p-5 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col justify-between transition-transform duration-200 active:scale-[0.99]">
+<div class="flex items-center justify-between">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="inline-flex items-center font-caption-tabular text-caption-tabular px-2 py-0.5 rounded-full bg-primary-soft text-primary font-medium">
+          −14%
+        </span>
+</div>
+<div class="mt-4">
+<div class="font-display-lg-mobile text-display-lg-mobile text-text-primary tracking-tight font-semibold">
+          4h 12m
+        </div>
+<p class="font-caption-default text-caption-default text-text-secondary mt-1">
+          Screen time
+        </p>
+</div>
+</div>
+<!-- Stat 2: Reels Scrolled -->
+<div class="bg-surface rounded-[20px] p-5 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col justify-between transition-transform duration-200 active:scale-[0.99]">
+<div class="flex items-center justify-between">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="inline-flex items-center font-caption-tabular text-caption-tabular px-2 py-0.5 rounded-full bg-accent-soft text-secondary font-medium">
+          +8%
+        </span>
+</div>
+<div class="mt-4">
+<div class="font-display-lg-mobile text-display-lg-mobile text-text-primary tracking-tight font-semibold">
+          286
+        </div>
+<p class="font-caption-default text-caption-default text-text-secondary mt-1">
+          Reels
+        </p>
+</div>
+</div>
+</div>
+<!-- Weekly Activity Rhythm Chart Card -->
+<div class="bg-surface rounded-[20px] p-5 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col">
+<div class="flex items-baseline justify-between mb-6">
+<div>
+<h2 class="font-section-title text-section-title text-text-primary">Weekly rhythm</h2>
+<p class="font-caption-default text-caption-default text-text-secondary mt-0.5">Average 3h 40m per active day</p>
+</div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary font-medium">Today</span>
+</div>
+<!-- Chart Bars (Mon to Sun) -->
+<div class="flex items-end justify-between h-36 px-1 pt-2">
+<!-- Monday -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary-soft h-[56px] transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">M</span>
+</div>
+<!-- Tuesday -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary-soft h-[78px] transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">T</span>
+</div>
+<!-- Wednesday -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary-soft h-[42px] transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">W</span>
+</div>
+<!-- Thursday -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary-soft h-[92px] transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">T</span>
+</div>
+<!-- Friday (Current Active Day) -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary h-[112px] shadow-sm transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-primary font-semibold">F</span>
+</div>
+<!-- Saturday -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary-soft h-[64px] transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">S</span>
+</div>
+<!-- Sunday -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-4 rounded-full bg-primary-soft h-[48px] transition-all duration-300"></div>
+<span class="font-caption-tabular text-caption-tabular text-text-secondary">S</span>
+</div>
+</div>
+</div>
+<!-- Top Apps Breakdown Card -->
+<div class="bg-surface rounded-[20px] p-5 shadow-[0_4px_20px_rgba(35,38,43,0.04)] flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<h2 class="font-section-title text-section-title text-text-primary">Top apps</h2>
+<a class="font-caption-default text-caption-default text-primary hover:opacity-80 transition-opacity flex items-center gap-0.5" href="#">
+        See all
+        <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<div class="flex flex-col gap-5">
+<!-- App 1: Instagram -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-[12px] bg-accent-soft flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-medium text-body-medium text-text-primary leading-tight">Instagram</span>
+<span class="font-caption-default text-caption-default text-text-secondary">Social • 194 reels</span>
+</div>
+</div>
+<span class="font-caption-tabular text-caption-tabular text-text-primary font-semibold">1h 48m</span>
+</div>
+<div class="w-full bg-surface-muted h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[43%]"></div>
+</div>
+</div>
+<!-- App 2: TikTok -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-[12px] bg-surface-muted flex items-center justify-center shrink-0 text-text-primary">
+<span class="material-symbols-outlined text-[20px]">play_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-medium text-body-medium text-text-primary leading-tight">TikTok</span>
+<span class="font-caption-default text-caption-default text-text-secondary">Short video • 92 reels</span>
+</div>
+</div>
+<span class="font-caption-tabular text-caption-tabular text-text-primary font-semibold">1h 12m</span>
+</div>
+<div class="w-full bg-surface-muted h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[29%]"></div>
+</div>
+</div>
+<!-- App 3: YouTube -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-[12px] bg-error-container flex items-center justify-center shrink-0 text-on-error-container">
+<span class="material-symbols-outlined text-[20px]">smart_display</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-medium text-body-medium text-text-primary leading-tight">YouTube</span>
+<span class="font-caption-default text-caption-default text-text-secondary">Media • Long form</span>
+</div>
+</div>
+<span class="font-caption-tabular text-caption-tabular text-text-primary font-semibold">45m</span>
+</div>
+<div class="w-full bg-surface-muted h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[18%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Mindful Encouragement Quiet Space -->
+<div class="rounded-[20px] bg-surface-muted/60 p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface flex items-center justify-center shrink-0 shadow-sm text-primary">
+<span class="material-symbols-outlined text-[18px]">spa</span>
+</div>
+<p class="font-caption-default text-caption-default text-text-secondary">
+      You paused 14 intentional minutes before reopening feeds today.
+    </p>
+</div>
+</div>
+<script>
+  // Segmented control micro-interaction
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => {
+        b.classList.remove('bg-surface', 'text-text-primary', 'shadow-sm');
+        b.classList.add('text-text-secondary');
+      });
+      btn.classList.add('bg-surface', 'text-text-primary', 'shadow-sm');
+      btn.classList.remove('text-text-secondary');
+    });
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_12px_rgba(35,38,43,0.04)]" data-active-classes="bg-primary-soft text-primary font-semibold"><div class="h-16 px-margin flex items-center justify-between"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full transition-colors duration-150 bg-primary-soft text-primary font-semibold" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">save_as</span><span class="font-caption-default text-caption-default mt-space-xs">Home</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full text-text-secondary transition-colors duration-150" data-path="reels" href="#"><span class="material-symbols-outlined text-[22px]">slow_motion_video</span><span class="font-caption-default text-caption-default mt-space-xs">Reels</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full text-text-secondary transition-colors duration-150" data-path="apps" href="#"><span class="material-symbols-outlined text-[22px]">apps</span><span class="font-caption-default text-caption-default mt-space-xs">Apps</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-space-sm rounded-full text-text-secondary transition-colors duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[22px]">tune</span><span class="font-caption-default text-caption-default mt-space-xs">Settings</span></a></div></nav>
+
+</body></html>

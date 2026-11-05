@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer indigo ring (center 54, 54, radius 22, strokeWidth 5) -->
+    <path
+        android:strokeColor="#5870C2"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M 54,32 A 22,22 0 1,1 53.99,32 Z"/>
+
+    <!-- Inner brand peach dot (center 54, 54, radius 8) -->
+    <path
+        android:fillColor="#F0A98E"
+        android:pathData="M 54,46 A 8,8 0 1,1 53.99,46 Z"/>
+</vector>

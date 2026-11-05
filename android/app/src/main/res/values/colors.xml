@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="oloz_bg">#F6F5F2</color>
+    <color name="oloz_surface">#FFFFFF</color>
+    <color name="oloz_primary">#5870C2</color>
+    <color name="oloz_chart">#6B83D6</color>
+    <color name="oloz_reel">#F0A98E</color>
+</resources>

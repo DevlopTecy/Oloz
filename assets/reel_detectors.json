@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "apps": {
+    "com.instagram.android": {
+      "label": "Instagram",
+      "surfaceMarkers": ["clips_viewer", "clips_swipe_refresh_container", "reel_viewer"],
+      "pagerClassHints": ["ViewPager2", "RecyclerView"]
+    },
+    "com.google.android.youtube": {
+      "label": "YouTube Shorts",
+      "surfaceMarkers": ["reel_player_page_container", "shorts", "reel_recycler"],
+      "pagerClassHints": ["RecyclerView", "ViewPager"]
+    },
+    "com.zhiliaoapp.musically": {
+      "label": "TikTok",
+      "surfaceMarkers": ["viewpager", "feed_view_pager"],
+      "pagerClassHints": ["ViewPager", "RecyclerView"]
+    },
+    "com.ss.android.ugc.trill": {
+      "label": "TikTok",
+      "surfaceMarkers": ["viewpager", "feed_view_pager"],
+      "pagerClassHints": ["ViewPager", "RecyclerView"]
+    },
+    "com.facebook.katana": {
+      "label": "Facebook Reels",
+      "surfaceMarkers": ["reels", "video_home", "reels_viewer"],
+      "pagerClassHints": ["RecyclerView", "ViewPager"]
+    }
+  },
+  "timing": {
+    "minDwellMs": 700,
+    "debounceMs": 500
+  }
+}
+

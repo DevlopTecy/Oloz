@@ -1,0 +1,408 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"border-subtle":"#E4E2DC","primary-fixed":"#dce1ff","surface-bright":"#f8f9ff","primary-soft":"#E3E8F8","primary-container":"#5870c2","primary-fixed-dim":"#b6c4ff","bg-app":"#F6F5F2","error":"#ba1a1a","on-secondary-container":"#79452f","on-surface":"#191c21","surface-dim":"#d8dae0","on-primary-fixed":"#00164e","tertiary-fixed-dim":"#eac249","on-tertiary-container":"#4f3d00","warning":"#E6C27A","surface-tint":"#415aaa","inverse-primary":"#b6c4ff","accent-soft":"#FBE9E1","success":"#7FB69A","surface-container":"#eceef4","secondary-fixed-dim":"#feb59a","on-secondary-fixed":"#350f02","secondary-fixed":"#ffdbce","on-primary-container":"#fffbff","on-primary-fixed-variant":"#274190","tertiary-container":"#cda72f","on-secondary-fixed-variant":"#6b3925","surface-container-highest":"#e1e2e9","on-background":"#191c21","on-tertiary-fixed-variant":"#584400","surface-container-high":"#e6e8ef","primary":"#3e57a7","background":"#f8f9ff","on-surface-variant":"#444651","outline":"#757682","tertiary":"#745b00","surface-container-lowest":"#ffffff","on-secondary":"#ffffff","tertiary-fixed":"#ffe08c","error-container":"#ffdad6","on-error-container":"#93000a","text-secondary":"#6E727A","secondary":"#88503a","danger":"#D98A8A","surface":"#FFFFFF","inverse-on-surface":"#eff0f7","surface-container-low":"#f2f3fa","on-error":"#ffffff","on-tertiary-fixed":"#241a00","inverse-surface":"#2e3136","on-primary":"#ffffff","surface-muted":"#EEEDE9","surface-variant":"#e1e2e9","text-primary":"#23262B","outline-variant":"#c5c5d3","on-tertiary":"#ffffff","secondary-container":"#feb59a"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-md":"0.75rem","gutter-desktop":"1.5rem","margin":"1.25rem","space-sm":"0.5rem","space-xl":"1.5rem","space-2xl":"2rem","space-3xl":"3rem","space-lg":"1rem","margin-desktop":"2rem","space-xs":"0.25rem","gutter":"1rem"},"fontFamily":{"title-md":["Inter"],"display-lg-mobile":["Inter"],"body-default":["Inter"],"caption-default":["Inter"],"section-title":["Inter"],"display-lg":["Inter"],"caption-tabular":["Inter"],"title-lg":["Inter"],"body-medium":["Inter"]},"fontSize":{"title-md":["18px",{"lineHeight":"24px","fontWeight":"600"}],"display-lg-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"600"}],"body-default":["14px",{"lineHeight":"20px","fontWeight":"400"}],"caption-default":["12px",{"lineHeight":"16px","fontWeight":"500"}],"section-title":["16px",{"lineHeight":"22px","fontWeight":"600"}],"display-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"600"}],"caption-tabular":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"title-lg":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-medium":["14px",{"lineHeight":"20px","fontWeight":"500"}]}}}}</script></head><body class="bg-bg-app font-body-default text-text-primary antialiased"><aside class="fixed left-0 top-0 h-full w-60 bg-surface shadow-[0_1px_8px_rgba(35,38,43,0.04)] z-50 flex flex-col justify-between py-space-xl px-space-lg"><div class="flex flex-col gap-space-2xl"><div class="flex items-center justify-between px-space-md"><div class="flex items-center gap-space-sm"><span class="w-7 h-7 rounded-xl bg-primary flex items-center justify-center text-on-primary font-title-md text-title-md">O</span><span class="font-title-lg text-title-lg text-text-primary tracking-tight">Oloz</span></div><span class="material-symbols-outlined text-outline text-[20px] cursor-pointer hover:text-text-primary transition-colors">dock_to_right</span></div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-primary-soft text-primary font-body-medium"><a class="flex items-center gap-space-md px-space-md py-space-md rounded-xl text-text-secondary hover:bg-surface-muted hover:text-text-primary transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[20px]">home</span><span class="font-body-medium text-body-medium">Home</span></a><a class="flex items-center gap-space-md px-space-md py-space-md rounded-xl text-text-secondary hover:bg-surface-muted hover:text-text-primary transition-colors" data-path="reels" href="#"><span class="material-symbols-outlined text-[20px]">play_circle</span><span class="font-body-medium text-body-medium">Reels</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-md rounded-xl transition-colors bg-primary-soft text-primary font-body-medium" data-path="apps" href="#"><span class="material-symbols-outlined text-[20px]">apps</span><span class="font-body-medium text-body-medium">Apps</span></a><a class="flex items-center gap-space-md px-space-md py-space-md rounded-xl text-text-secondary hover:bg-surface-muted hover:text-text-primary transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-medium text-body-medium">Settings</span></a></nav></div><div class="flex flex-col gap-space-md px-space-xs"><div class="flex items-center justify-between px-space-md py-space-sm rounded-lg bg-surface-muted"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-success"></span><span class="font-caption-default text-caption-default text-text-secondary">Live Syncing</span></div><span class="material-symbols-outlined text-text-secondary text-[16px]">sync</span></div><div class="flex items-center justify-between px-space-md py-space-sm"><div class="flex items-center gap-space-md"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col"><span class="font-body-medium text-body-medium text-text-primary leading-tight">Elena Rostova</span><span class="font-caption-default text-caption-default text-text-secondary">Mindful Tier</span></div></div><span class="material-symbols-outlined text-outline text-[18px]">more_vert</span></div></div></aside><div class="pl-60"><header class="fixed top-0 left-60 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(35,38,43,0.04)] z-40 flex items-center"><div class="w-full max-w-[1200px] mx-auto px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-caption-tabular text-caption-tabular text-text-secondary font-medium">Daily cadence</span></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-muted text-text-secondary"><span class="material-symbols-outlined text-[16px]">schedule</span><span class="font-caption-tabular text-caption-tabular">Today · Week 42</span></div><button class="px-space-md py-1.5 rounded-lg bg-surface-muted hover:bg-surface-dim text-text-secondary hover:text-text-primary text-caption-default font-caption-default transition-colors">Export</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 min-h-screen bg-bg-app"><div class="max-w-[1200px] mx-auto px-margin-desktop py-space-2xl"><div class="flex flex-col w-full gap-space-2xl">
+<!-- Top Utility & Filter Strip -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-lg">
+<!-- Search Bar with recessed container -->
+<div class="relative w-full md:w-80">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">search</span>
+<input class="w-full h-12 bg-surface-muted text-text-primary placeholder:text-text-secondary pl-12 pr-4 rounded-[14px] text-body-default font-body-default outline-none transition-all duration-200 focus:bg-surface focus:shadow-sm" id="appSearchInput" placeholder="Filter apps or categories..." type="text">
+</div>
+<!-- Segmented Filter Chips -->
+<div class="flex items-center gap-space-xs p-1 bg-surface-muted rounded-full self-start md:self-auto"><button class="filter-chip px-space-md py-1.5 rounded-full text-caption-default font-medium bg-[#E3E8F8] text-[#5870C2] shadow-sm transition-all duration-150" onclick="setFilter('all', this)">All</button><button class="filter-chip px-space-md py-1.5 rounded-full text-caption-default font-medium text-text-secondary hover:text-text-primary transition-all duration-150" onclick="setFilter('Phone', this)">Phone</button><button class="filter-chip px-space-md py-1.5 rounded-full text-caption-default font-medium text-text-secondary hover:text-text-primary transition-all duration-150" onclick="setFilter('PC', this)">PC</button></div>
+</div>
+<!-- Primary Split Architecture -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Master App Inventory (7 Cols) -->
+<div class="lg:col-span-7 flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-space-sm mb-1"><span class="text-caption-default font-caption-default text-text-secondary">App</span><span class="text-caption-default font-caption-default text-text-secondary">Time</span></div>
+<div class="flex flex-col gap-space-sm" id="appListContainer"><!-- App Row: Instagram -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="Phone" data-name="Instagram" onclick="selectApp('Instagram', 'Phone', '1h 48m', 142, 23, '108', [45, 60, 92, 70, 115, 84, 108], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-[#FBE9E1] flex items-center justify-center text-[#88503a] shrink-0">
+        <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">Instagram</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">Phone</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">1h 48m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 78%;"></div>
+  </div>
+</div>
+
+<!-- App Row: TikTok -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="Phone" data-name="TikTok" onclick="selectApp('TikTok', 'Phone', '1h 12m', 198, 31, '72', [30, 42, 55, 80, 65, 90, 72], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-surface-muted flex items-center justify-center text-text-primary shrink-0">
+        <span class="material-symbols-outlined text-[20px]">music_note</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">TikTok</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">Phone</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">1h 12m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 58%;"></div>
+  </div>
+</div>
+
+<!-- App Row: YouTube -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="PC" data-name="YouTube" onclick="selectApp('YouTube', 'PC', '45m', 28, 9, '45', [60, 50, 40, 35, 75, 45, 45], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-[#FBE9E1] flex items-center justify-center text-[#88503a] shrink-0">
+        <span class="material-symbols-outlined text-[20px]">smart_display</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">YouTube</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">PC</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">45m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 36%;"></div>
+  </div>
+</div>
+
+<!-- App Row: X -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="Phone" data-name="X" onclick="selectApp('X', 'Phone', '28m', 12, 18, '28', [20, 25, 40, 30, 22, 35, 28], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-surface-muted flex items-center justify-center text-text-primary shrink-0">
+        <span class="material-symbols-outlined text-[20px]">tag</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">X</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">Phone</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">28m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 22%;"></div>
+  </div>
+</div>
+
+<!-- App Row: Chrome -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="PC" data-name="Chrome" onclick="selectApp('Chrome', 'PC', '22m', 0, 14, '22', [40, 35, 50, 30, 20, 25, 22], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-primary-soft flex items-center justify-center text-primary shrink-0">
+        <span class="material-symbols-outlined text-[20px]">public</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">Chrome</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">PC</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">22m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 17%;"></div>
+  </div>
+</div>
+
+<!-- App Row: WhatsApp -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="Phone" data-name="WhatsApp" onclick="selectApp('WhatsApp', 'Phone', '18m', 0, 26, '18', [15, 20, 18, 22, 19, 15, 18], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-surface-muted flex items-center justify-center text-text-primary shrink-0">
+        <span class="material-symbols-outlined text-[20px]">chat</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">WhatsApp</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">Phone</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">18m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 14%;"></div>
+  </div>
+</div>
+
+<!-- App Row: Reddit -->
+<div class="app-row group relative bg-surface rounded-[20px] p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md" data-device="PC" data-name="Reddit" onclick="selectApp('Reddit', 'PC', '14m', 15, 6, '14', [25, 18, 20, 15, 30, 22, 14], this)">
+  <div class="flex items-center justify-between mb-2.5">
+    <div class="flex items-center gap-space-md">
+      <div class="w-9 h-9 rounded-[12px] bg-[#FBE9E1] flex items-center justify-center text-[#88503a] shrink-0">
+        <span class="material-symbols-outlined text-[20px]">forum</span>
+      </div>
+      <div class="flex items-center gap-space-sm">
+        <span class="text-body-medium font-body-medium text-text-primary">Reddit</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-muted text-text-secondary text-[11px] font-medium">PC</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="text-body-medium font-body-medium text-text-primary tabular-nums">14m</span>
+    </div>
+  </div>
+  <div class="w-full h-1 bg-surface-muted rounded-full overflow-hidden">
+    <div class="h-full bg-[#5870C2] rounded-full transition-all duration-500" style="width: 11%;"></div>
+  </div>
+</div></div>
+</div>
+<!-- Right Side Panel: Precision Detail Surface (5 Cols) -->
+<div class="lg:col-span-5 sticky top-24">
+<div class="bg-surface rounded-[20px] p-6 md:p-8 shadow-sm flex flex-col gap-space-xl"><!-- Header Info -->
+<div class="flex items-center justify-between">
+  <div class="flex items-center gap-space-md">
+    <div class="w-9 h-9 rounded-[12px] bg-[#FBE9E1] flex items-center justify-center text-[#88503a]" id="detailAppIcon">
+      <span class="material-symbols-outlined text-[20px]" id="detailAppIconSymbol">photo_camera</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-title-lg font-title-lg text-text-primary" id="detailAppName">Instagram</span>
+      <span class="text-caption-default font-caption-default text-text-secondary" id="detailAppDevice">Phone</span>
+    </div>
+  </div>
+  <span class="flex items-center gap-1 text-caption-tabular font-caption-tabular text-success bg-surface-muted px-2.5 py-1 rounded-full">
+    <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+    Synced
+  </span>
+</div>
+
+<!-- Focal Metric -->
+<div class="flex flex-col gap-space-xs">
+  <span class="text-caption-default font-caption-default text-text-secondary">Screen allocation</span>
+  <div class="flex items-baseline gap-space-sm">
+    <span class="text-display-lg font-display-lg text-text-primary tracking-tight" id="detailDuration">1h 48m</span>
+    <span class="text-caption-default font-caption-default text-text-secondary">today</span>
+  </div>
+</div>
+
+<!-- Metric Sub-Cards (Reels in peach & Opens) -->
+<div class="grid grid-cols-2 gap-space-md">
+  <!-- Reels Tally (Peach tinted) -->
+  <div class="bg-[#FBE9E1] rounded-[16px] p-4 flex flex-col gap-space-xs">
+    <div class="flex items-center justify-between text-[#88503a]">
+      <span class="text-caption-default font-medium text-[#88503a]">Reels</span>
+      <span class="material-symbols-outlined text-[18px]">play_circle</span>
+    </div>
+    <span class="text-title-lg font-title-lg text-[#88503a] tabular-nums" id="detailReels">142</span>
+    <span class="text-caption-default text-text-secondary">consumed total</span>
+  </div>
+  <!-- Opens Tally -->
+  <div class="bg-surface-muted rounded-[16px] p-4 flex flex-col gap-space-xs">
+    <div class="flex items-center justify-between text-text-secondary">
+      <span class="text-caption-default font-medium text-text-secondary">Opens</span>
+      <span class="material-symbols-outlined text-[18px]">touch_app</span>
+    </div>
+    <span class="text-title-lg font-title-lg text-text-primary tabular-nums" id="detailOpens">23</span>
+    <span class="text-caption-default text-text-secondary">pickups today</span>
+  </div>
+</div>
+
+<!-- 7-Day Usage Bar Chart -->
+<div class="flex flex-col gap-space-md">
+  <div class="flex items-center justify-between">
+    <span class="text-caption-default font-caption-default text-text-secondary">7-day trajectory</span>
+    <span class="text-caption-default font-caption-default text-text-secondary">Avg 1h 14m/day</span>
+  </div>
+  <!-- 7 Visible Bars Visualizer -->
+  <div class="flex items-end justify-between h-32 pt-4 px-2">
+    <!-- Mon -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#E3E8F8] transition-all duration-300" style="height: 45%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-secondary text-[11px]">M</span>
+    </div>
+    <!-- Tue -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#E3E8F8] transition-all duration-300" style="height: 58%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-secondary text-[11px]">T</span>
+    </div>
+    <!-- Wed -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#E3E8F8] transition-all duration-300" style="height: 76%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-secondary text-[11px]">W</span>
+    </div>
+    <!-- Thu -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#E3E8F8] transition-all duration-300" style="height: 64%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-secondary text-[11px]">T</span>
+    </div>
+    <!-- Fri -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#E3E8F8] transition-all duration-300" style="height: 90%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-secondary text-[11px]">F</span>
+    </div>
+    <!-- Sat -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#E3E8F8] transition-all duration-300" style="height: 68%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-secondary text-[11px]">S</span>
+    </div>
+    <!-- Today (Sun) -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div class="w-3 rounded-full bg-[#6B83D6] transition-all duration-300" id="chartBarToday" style="height: 86%;"></div>
+      <span class="text-caption-tabular font-caption-tabular text-text-primary font-bold text-[11px]">S</span>
+    </div>
+  </div>
+</div>
+
+<!-- Break reminder Context Row -->
+<div class="p-4 rounded-[16px] bg-surface-muted flex items-center justify-between">
+  <div class="flex items-center gap-space-sm">
+    <span class="material-symbols-outlined text-outline text-[20px]">notifications_paused</span>
+    <div class="flex flex-col">
+      <span class="text-caption-default font-medium text-text-primary">Break reminder</span>
+      <span class="text-caption-default text-text-secondary">Every 30m</span>
+    </div>
+  </div>
+  <span class="text-caption-default font-medium text-[#5870C2] cursor-pointer hover:underline">Edit</span>
+</div>
+
+<!-- Prominent Primary Call to Action in #5870C2 -->
+<button class="w-full h-12 rounded-[14px] bg-[#5870C2] hover:bg-[#3e57a7] text-white font-body-medium text-body-medium shadow-sm transition-all duration-150 flex items-center justify-center gap-space-sm active:scale-[0.98]" onclick="openLimitModal()">
+  <span class="material-symbols-outlined text-[20px]">timer</span>
+  <span class="">Set limit</span>
+</button></div>
+</div>
+</div>
+<!-- Editorial Companion Context / Minimal Insights Card -->
+
+<!-- Interactive Modal: Limit Setup (Recessed Minimal Dialog) -->
+<div class="fixed inset-0 bg-text-primary/20 backdrop-blur-sm z-50 hidden items-center justify-center p-4" id="limitModal">
+<div class="bg-surface rounded-[20px] p-8 max-w-md w-full shadow-xl flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">hourglass_top</span>
+<span class="text-title-md font-title-md text-text-primary">App Threshold</span>
+</div>
+<button class="text-text-secondary hover:text-text-primary" onclick="closeLimitModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="text-caption-default font-caption-default text-text-secondary">
+        Establish a calm, graceful interlude when daily engagement reaches your chosen horizon.
+      </p>
+<div class="flex flex-col gap-space-xs">
+<label class="text-caption-tabular font-caption-tabular text-text-secondary uppercase tracking-wider">Daily Ceiling</label>
+<div class="flex items-center justify-between bg-surface-muted p-4 rounded-[14px]">
+<span class="text-title-lg font-title-lg text-text-primary">1 hour 15 minutes</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded-full bg-surface text-text-primary flex items-center justify-center hover:bg-surface-variant font-bold text-title-md">−</button>
+<button class="w-8 h-8 rounded-full bg-surface text-text-primary flex items-center justify-center hover:bg-surface-variant font-bold text-title-md">+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-2">
+<button class="px-space-lg py-2.5 rounded-[12px] text-body-medium font-body-medium text-text-secondary hover:bg-surface-muted transition-colors" onclick="closeLimitModal()">
+          Cancel
+        </button>
+<button class="px-space-lg py-2.5 rounded-[12px] bg-[#6B83D6] hover:bg-[#5870c2] text-surface text-body-medium font-body-medium transition-colors shadow-sm" onclick="closeLimitModal()">
+          Save Threshold
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // App Selection Behavior
+  const appIcons = {
+    'Instagram': 'photo_camera',
+    'TikTok': 'music_note',
+    'YouTube': 'smart_display',
+    'X': 'tag',
+    'Safari': 'explore',
+    'WhatsApp': 'chat',
+    'Reddit': 'forum'
+  };
+
+  function selectApp(name, device, duration, reels, opens, minutes, weeklyData, element) {
+    // Highlight Active Row
+    document.querySelectorAll('.app-row').forEach(row => {
+      row.classList.remove('bg-surface-muted/60');
+    });
+    if (element) {
+      element.classList.add('bg-surface-muted/60');
+    }
+
+    // Populate Details
+    document.getElementById('detailAppName').textContent = name;
+    document.getElementById('detailAppDevice').textContent = 'Primary on ' + device;
+    document.getElementById('detailDuration').textContent = duration;
+    document.getElementById('detailReels').textContent = reels;
+    document.getElementById('detailOpens').textContent = opens;
+
+    const iconSymbol = appIcons[name] || 'apps';
+    document.getElementById('detailAppIconSymbol').textContent = iconSymbol;
+
+    // Adjust chart bar height relative to maximum
+    const maxVal = Math.max(...weeklyData, 1);
+    const todayVal = weeklyData[weeklyData.length - 1];
+    const todayPct = Math.round((todayVal / 120) * 100);
+    const todayBar = document.getElementById('chartBarToday');
+    if (todayBar) {
+      todayBar.style.height = `${Math.min(todayPct, 100)}%`;
+    }
+  }
+
+  // Filter Chips Behavior
+  function setFilter(deviceFilter, btn) {
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.classList.remove('bg-surface', 'text-text-primary', 'shadow-sm');
+      chip.classList.add('text-text-secondary');
+    });
+    btn.classList.add('bg-surface', 'text-text-primary', 'shadow-sm');
+    btn.classList.remove('text-text-secondary');
+
+    const rows = document.querySelectorAll('.app-row');
+    rows.forEach(row => {
+      if (deviceFilter === 'all' || row.dataset.device === deviceFilter) {
+        row.style.display = 'block';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // Live Instant Search
+  const searchInput = document.getElementById('appSearchInput');
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const rows = document.querySelectorAll('.app-row');
+    rows.forEach(row => {
+      const name = row.dataset.name.toLowerCase();
+      if (name.includes(query)) {
+        row.style.display = 'block';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+
+  // Modal Toggles
+  function openLimitModal() {
+    const modal = document.getElementById('limitModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeLimitModal() {
+    const modal = document.getElementById('limitModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+</script></div></main></div>
+
+</body></html>
