@@ -50,6 +50,7 @@ void main() {
       ProviderScope(
         overrides: [
           databaseProvider.overrideWithValue(db),
+          referenceDateProvider.overrideWithValue(DateTime(2026, 11, 6)),
         ],
         child: MaterialApp(
           theme: OlozTheme.lightTheme(),

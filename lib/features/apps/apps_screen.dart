@@ -40,10 +40,10 @@ class _AppsScreenState extends ConsumerState<AppsScreen> {
     final selectedDevice = ref.watch(deviceFilterProvider);
     final searchQuery = ref.watch(searchQueryProvider);
 
-    final totalMs = totalTimeAsync.value ?? (307 * 60 * 1000);
+    final totalMs = totalTimeAsync.value ?? 0;
     const limitMs = 6 * 60 * 60 * 1000; // 6h 00m
 
-    final allApps = appsSummaryAsync.value ?? _getCanonicalApps();
+    final allApps = appsSummaryAsync.value ?? const <AppUsageSummary>[];
     final filteredApps = allApps.where((app) {
       final name = (app as dynamic).label.toString().toLowerCase();
       final cat = (app as dynamic).category.toString().toLowerCase();
@@ -93,74 +93,6 @@ class _AppsScreenState extends ConsumerState<AppsScreen> {
               ),
       ),
     );
-  }
-
-  List<AppUsageSummary> _getCanonicalApps() {
-    return const [
-      AppUsageSummary(
-        package: 'com.instagram.android',
-        label: 'Instagram',
-        platform: 'android',
-        category: 'social',
-        foregroundMs: 108 * 60 * 1000,
-        opens: 23,
-        reels: 142,
-      ),
-      AppUsageSummary(
-        package: 'com.zhiliaoapp.musically',
-        label: 'TikTok',
-        platform: 'android',
-        category: 'video',
-        foregroundMs: 72 * 60 * 1000,
-        opens: 18,
-        reels: 84,
-      ),
-      AppUsageSummary(
-        package: 'com.google.android.youtube',
-        label: 'YouTube',
-        platform: 'android',
-        category: 'video',
-        foregroundMs: 45 * 60 * 1000,
-        opens: 12,
-        reels: 48,
-      ),
-      AppUsageSummary(
-        package: 'com.twitter.android',
-        label: 'X',
-        platform: 'android',
-        category: 'social',
-        foregroundMs: 28 * 60 * 1000,
-        opens: 9,
-        reels: 0,
-      ),
-      AppUsageSummary(
-        package: 'chrome.exe',
-        label: 'Chrome',
-        platform: 'windows',
-        category: 'browsing',
-        foregroundMs: 22 * 60 * 1000,
-        opens: 14,
-        reels: 0,
-      ),
-      AppUsageSummary(
-        package: 'com.whatsapp',
-        label: 'WhatsApp',
-        platform: 'android',
-        category: 'messaging',
-        foregroundMs: 18 * 60 * 1000,
-        opens: 25,
-        reels: 0,
-      ),
-      AppUsageSummary(
-        package: 'com.reddit.frontpage',
-        label: 'Reddit',
-        platform: 'android',
-        category: 'social',
-        foregroundMs: 14 * 60 * 1000,
-        opens: 6,
-        reels: 0,
-      ),
-    ];
   }
 }
 
@@ -353,8 +285,22 @@ class _MobileAppsContent extends ConsumerWidget {
 
         const SizedBox(height: OlozSpacing.s20),
 
-        // App rows: icon (36px rounded square, radius 12), name, time on the right, thin indigo progress bar under, 12px more space
-        ...filteredApps.map((app) {
+        if (filteredApps.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: OlozSpacing.s32),
+            child: Center(
+              child: Text(
+                'No apps found',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  color: colors.textSecondary,
+                ),
+              ),
+            ),
+          )
+        else
+          ...filteredApps.map((app) {
           final pkg = (app as dynamic).package as String;
           final name = (app as dynamic).label as String;
           final ms = (app as dynamic).foregroundMs as int;

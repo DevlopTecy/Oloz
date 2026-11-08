@@ -27,8 +27,8 @@ class HomeScreen extends ConsumerWidget {
     final appsSummaryAsync = ref.watch(appsSummaryProvider);
     final platformSplitAsync = ref.watch(platformSplitProvider);
 
-    final totalTimeMs = totalTimeAsync.value ?? (307 * 60 * 1000);
-    final totalReels = totalReelsAsync.value ?? 286;
+    final totalTimeMs = totalTimeAsync.value ?? 0;
+    final totalReels = totalReelsAsync.value ?? 0;
 
     // First day empty state detection
     if (totalTimeAsync.hasValue && totalTimeMs == 0 && totalReels == 0) {
@@ -268,36 +268,19 @@ class _MobileHomeContent extends ConsumerWidget {
               ),
               const SizedBox(height: OlozSpacing.s12),
               if (topApps.isEmpty)
-                // Fallback canonical apps
-                ...[
-                  AppRow(
-                    name: 'Instagram',
-                    formattedTime: '1h 48m',
-                    progress: 1.08 / 1.5,
-                    reelsCount: 142,
-                    appIcon: Icons.camera_alt_outlined,
-                    onTap: () => context.push('/apps/com.instagram.android'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: OlozSpacing.s16),
+                  child: Center(
+                    child: Text(
+                      'No app usage recorded for this day.',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        color: colors.textSecondary,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: OlozSpacing.s12),
-                  AppRow(
-                    name: 'TikTok',
-                    formattedTime: '1h 12m',
-                    progress: 0.72,
-                    reelsCount: 84,
-                    appIcon: Icons.music_note_outlined,
-                    onTap: () => context.push('/apps/com.zhiliaoapp.musically'),
-                  ),
-                  const SizedBox(height: OlozSpacing.s12),
-                  AppRow(
-                    name: 'YouTube',
-                    formattedTime: '45m',
-                    progress: 0.45,
-                    reelsCount: 48,
-                    appIcon: Icons.play_arrow_outlined,
-                    onTap: () =>
-                        context.push('/apps/com.google.android.youtube'),
-                  ),
-                ]
+                )
               else
                 ...topApps.map((app) {
                   final ms = (app as dynamic).foregroundMs as int;
@@ -326,7 +309,7 @@ class _MobileHomeContent extends ConsumerWidget {
   }
 }
 
-class _DesktopHomeContent extends StatelessWidget {
+class _DesktopHomeContent extends ConsumerWidget {
   const _DesktopHomeContent({
     required this.totalTimeMs,
     required this.totalReels,
@@ -342,8 +325,9 @@ class _DesktopHomeContent extends StatelessWidget {
   final AsyncValue<List<dynamic>> platformSplitAsync;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.olozColors;
+    final refDate = ref.watch(referenceDateProvider);
     final weekBars = _buildWeekBarItems(weekSeriesAsync.value);
     final apps = appsSummaryAsync.value ?? [];
     final topApps = apps.take(5).toList();
@@ -414,7 +398,7 @@ class _DesktopHomeContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Fri, Nov 6',
+                  DateFormat('EEE, MMM d').format(refDate),
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 15,
@@ -532,54 +516,19 @@ class _DesktopHomeContent extends StatelessWidget {
                     ),
                     const SizedBox(height: OlozSpacing.s12),
                     if (topApps.isEmpty)
-                      ...[
-                        AppRow(
-                          name: 'Instagram',
-                          formattedTime: '1h 48m',
-                          progress: 1.08 / 1.5,
-                          reelsCount: 142,
-                          appIcon: Icons.camera_alt_outlined,
-                          onTap: () =>
-                              context.push('/apps/com.instagram.android'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: OlozSpacing.s16),
+                        child: Center(
+                          child: Text(
+                            'No app usage recorded for this day.',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 13,
+                              color: colors.textSecondary,
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: OlozSpacing.s12),
-                        AppRow(
-                          name: 'TikTok',
-                          formattedTime: '1h 12m',
-                          progress: 0.72,
-                          reelsCount: 84,
-                          appIcon: Icons.music_note_outlined,
-                          onTap: () =>
-                              context.push('/apps/com.zhiliaoapp.musically'),
-                        ),
-                        const SizedBox(height: OlozSpacing.s12),
-                        AppRow(
-                          name: 'YouTube',
-                          formattedTime: '45m',
-                          progress: 0.45,
-                          reelsCount: 48,
-                          appIcon: Icons.play_arrow_outlined,
-                          onTap: () =>
-                              context.push('/apps/com.google.android.youtube'),
-                        ),
-                        const SizedBox(height: OlozSpacing.s12),
-                        AppRow(
-                          name: 'X',
-                          formattedTime: '28m',
-                          progress: 0.28,
-                          appIcon: Icons.close_outlined,
-                          onTap: () =>
-                              context.push('/apps/com.twitter.android'),
-                        ),
-                        const SizedBox(height: OlozSpacing.s12),
-                        AppRow(
-                          name: 'Chrome',
-                          formattedTime: '22m',
-                          progress: 0.22,
-                          appIcon: Icons.circle_outlined,
-                          onTap: () => context.push('/apps/chrome.exe'),
-                        ),
-                      ]
+                      )
                     else
                       ...topApps.map((app) {
                         final ms = (app as dynamic).foregroundMs as int;
@@ -645,28 +594,29 @@ class _DesktopHomeContent extends StatelessWidget {
 }
 
 List<DailyBarItem> _buildWeekBarItems(List<dynamic>? series) {
+  final dayFormatter = DateFormat('E');
+  final now = DateTime.now();
+
   if (series == null || series.length < 7) {
-    // Canonical dataset: S, M, T, W, T, F, S ending Friday Nov 6
-    // Nov 6 is Friday!
-    // Days: Sat Oct 31, Sun Nov 1, Mon Nov 2, Tue Nov 3, Wed Nov 4, Thu Nov 5, Fri Nov 6
-    return const [
-      DailyBarItem(dayLabel: 'S', value: 4.1, semanticLabel: 'Saturday 4h 06m'),
-      DailyBarItem(dayLabel: 'S', value: 3.8, semanticLabel: 'Sunday 3h 48m'),
-      DailyBarItem(dayLabel: 'M', value: 4.5, semanticLabel: 'Monday 4h 30m'),
-      DailyBarItem(dayLabel: 'T', value: 2.9, semanticLabel: 'Tuesday 2h 54m'),
-      DailyBarItem(dayLabel: 'W', value: 5.2, semanticLabel: 'Wednesday 5h 12m'),
-      DailyBarItem(dayLabel: 'T', value: 4, semanticLabel: 'Thursday 4h 00m'),
-      DailyBarItem(dayLabel: 'F', value: 5.12, semanticLabel: 'Friday (Today) 5h 07m'),
-    ];
+    return List.generate(7, (i) {
+      final date = now.subtract(Duration(days: 6 - i));
+      final dayInitial = dayFormatter.format(date).substring(0, 1);
+      final isToday = i == 6;
+      return DailyBarItem(
+        dayLabel: dayInitial,
+        value: 0,
+        semanticLabel:
+            '${dayFormatter.format(date)}${isToday ? ' (Today)' : ''}: 0m',
+      );
+    });
   }
 
   final items = <DailyBarItem>[];
-  final dayFormatter = DateFormat('E');
   for (var i = 0; i < series.length; i++) {
     final point = series[i];
     final dayStr = (point as dynamic).day as String;
     final ms = (point as dynamic).foregroundMs as int;
-    final date = DateTime.tryParse(dayStr) ?? DateTime.now();
+    final date = DateTime.tryParse(dayStr) ?? now;
     final dayInitial = dayFormatter.format(date).substring(0, 1);
     final hours = ms / (60 * 60 * 1000);
 

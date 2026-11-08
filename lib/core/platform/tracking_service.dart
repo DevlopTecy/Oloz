@@ -263,9 +263,17 @@ class TrackingService {
     int? startMs,
     int? endMs,
   }) async {
+    final now = DateTime.now();
+    final effectiveStartMs = startMs ??
+        now
+            .subtract(const Duration(days: 6))
+            .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0)
+            .millisecondsSinceEpoch;
+    final effectiveEndMs = endMs ?? now.millisecondsSinceEpoch;
+
     final usageData = await queryUsageForRange(
-      startMs: startMs,
-      endMs: endMs,
+      startMs: effectiveStartMs,
+      endMs: effectiveEndMs,
     );
 
     final rawSessions = usageData['sessions'] as List<dynamic>? ?? [];
@@ -279,6 +287,8 @@ class TrackingService {
       final category = rawApp['category'] as String? ?? 'other';
       final isShort = rawApp['isShortVideo'] as bool? ?? false;
 
+      if (package.isEmpty) continue;
+
       await db.usageDao.upsertApp(
         AppsCompanion.insert(
           package: package,
@@ -290,7 +300,10 @@ class TrackingService {
       );
     }
 
-    var insertedSessions = 0;
+    // Group sessions by day and package
+    final dayPackageTotals = <String, Map<String, ({int totalMs, int opens})>>{};
+    final validSessions = <({String package, int start, int end, String day})>[];
+
     for (final rawSession in rawSessions) {
       if (rawSession is! Map) continue;
       final package = rawSession['package'] as String? ?? '';
@@ -298,18 +311,70 @@ class TrackingService {
       final end = (rawSession['endMs'] as num?)?.toInt() ?? 0;
       final day = rawSession['day'] as String? ?? '';
 
-      if (package.isEmpty || end <= start) continue;
+      if (package.isEmpty || end <= start || day.isEmpty) continue;
 
-      await db.usageDao.recordSession(
-        package: package,
-        deviceId: deviceId,
-        startMs: start,
-        endMs: end,
-        day: day,
+      final duration = end - start;
+      validSessions.add((package: package, start: start, end: end, day: day));
+
+      final dayMap = dayPackageTotals.putIfAbsent(day, () => {});
+      final current = dayMap[package] ?? (totalMs: 0, opens: 0);
+      dayMap[package] = (
+        totalMs: current.totalMs + duration,
+        opens: current.opens + 1,
       );
-      insertedSessions++;
     }
 
-    return insertedSessions;
+    // Apply updates inside a transaction for complete idempotency
+    await db.transaction(() async {
+      for (final entry in dayPackageTotals.entries) {
+        final day = entry.key;
+        final packageMap = entry.value;
+
+        // Clear existing sessions for this day & device to prevent duplicates
+        await (db.delete(db.sessions)
+              ..where((tbl) =>
+                  tbl.day.equals(day) & tbl.deviceId.equals(deviceId)))
+            .go();
+
+        // Insert new sessions
+        for (final s in validSessions.where((s) => s.day == day)) {
+          await db.into(db.sessions).insert(
+                SessionsCompanion.insert(
+                  package: s.package,
+                  deviceId: deviceId,
+                  startMs: s.start,
+                  endMs: s.end,
+                  day: s.day,
+                ),
+              );
+        }
+
+        // Upsert DailyTotals per package, preserving any tracked reels
+        for (final pkgEntry in packageMap.entries) {
+          final pkg = pkgEntry.key;
+          final stats = pkgEntry.value;
+
+          final existing = await (db.select(db.dailyTotals)
+                ..where((tbl) =>
+                    tbl.day.equals(day) &
+                    tbl.package.equals(pkg) &
+                    tbl.deviceId.equals(deviceId)))
+              .getSingleOrNull();
+
+          await db.into(db.dailyTotals).insertOnConflictUpdate(
+                DailyTotalsCompanion(
+                  day: Value(day),
+                  package: Value(pkg),
+                  deviceId: Value(deviceId),
+                  foregroundMs: Value(stats.totalMs),
+                  opens: Value(stats.opens),
+                  reels: Value(existing?.reels ?? 0),
+                ),
+              );
+        }
+      }
+    });
+
+    return validSessions.length;
   }
 }

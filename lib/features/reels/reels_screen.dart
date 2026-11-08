@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
 import 'package:oloz/core/widgets/delta_chip.dart';
 import 'package:oloz/core/widgets/ring.dart';
@@ -20,7 +21,7 @@ class ReelsScreen extends ConsumerWidget {
     final platformSplitAsync = ref.watch(platformSplitProvider);
     final thirtyDayReelsAsync = ref.watch(thirtyDayReelsProvider);
 
-    final totalReels = totalReelsAsync.value ?? 286;
+    final totalReels = totalReelsAsync.value ?? 0;
     const dailyGoal = 350;
     final remaining = (dailyGoal - totalReels).clamp(0, dailyGoal);
     final progress = (totalReels / dailyGoal).clamp(0.0, 1.0);
@@ -41,6 +42,7 @@ class ReelsScreen extends ConsumerWidget {
                 remaining: remaining,
                 progress: progress,
                 platformSplitAsync: platformSplitAsync,
+                thirtyDayReelsAsync: thirtyDayReelsAsync,
               ),
       ),
     );
@@ -53,26 +55,39 @@ class _MobileReelsContent extends StatelessWidget {
     required this.remaining,
     required this.progress,
     required this.platformSplitAsync,
+    required this.thirtyDayReelsAsync,
   });
 
   final int totalReels;
   final int remaining;
   final double progress;
   final AsyncValue<List<PlatformReelSummary>> platformSplitAsync;
+  final AsyncValue<List<DailyReelPoint>> thirtyDayReelsAsync;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.olozColors;
 
-    const weekBars = [
-      DailyBarItem(dayLabel: 'S', value: 240, semanticLabel: 'Saturday 240 reels'),
-      DailyBarItem(dayLabel: 'S', value: 310, semanticLabel: 'Sunday 310 reels'),
-      DailyBarItem(dayLabel: 'M', value: 180, semanticLabel: 'Monday 180 reels'),
-      DailyBarItem(dayLabel: 'T', value: 290, semanticLabel: 'Tuesday 290 reels'),
-      DailyBarItem(dayLabel: 'W', value: 220, semanticLabel: 'Wednesday 220 reels'),
-      DailyBarItem(dayLabel: 'T', value: 300, semanticLabel: 'Thursday 300 reels'),
-      DailyBarItem(dayLabel: 'F', value: 286, semanticLabel: 'Friday (Today) 286 reels'),
-    ];
+    final dayFormatter = DateFormat('E');
+    final now = DateTime.now();
+    final points = thirtyDayReelsAsync.value;
+    final last7Points = points != null && points.length >= 7
+        ? points.sublist(points.length - 7)
+        : null;
+
+    final weekBars = List.generate(7, (i) {
+      final date = now.subtract(Duration(days: 6 - i));
+      final dayInitial = dayFormatter.format(date).substring(0, 1);
+      final count =
+          last7Points != null ? last7Points[i].count.toDouble() : 0.0;
+      final isToday = i == 6;
+      return DailyBarItem(
+        dayLabel: dayInitial,
+        value: count,
+        semanticLabel:
+            '${dayFormatter.format(date)}${isToday ? ' (Today)' : ''}: ${count.toInt()} reels',
+      );
+    });
 
     final platformItems = _buildPlatformItems(platformSplitAsync.value, colors);
 
@@ -178,10 +193,25 @@ class _MobileReelsContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: OlozSpacing.s16),
-              ...platformItems.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: OlozSpacing.s12),
-                    child: _PlatformReelRow(item: item, colors: colors),
-                  )),
+              if (platformItems.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: OlozSpacing.s8),
+                  child: Center(
+                    child: Text(
+                      'No reels detected yet today.',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                ...platformItems.map((item) => Padding(
+                      padding: const EdgeInsets.only(bottom: OlozSpacing.s12),
+                      child: _PlatformReelRow(item: item, colors: colors),
+                    )),
             ],
           ),
         ),
@@ -409,10 +439,25 @@ class _DesktopReelsContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: OlozSpacing.s16),
-              ...platformItems.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: OlozSpacing.s12),
-                    child: _PlatformReelRow(item: item, colors: colors),
-                  )),
+              if (platformItems.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: OlozSpacing.s8),
+                  child: Center(
+                    child: Text(
+                      'No reels detected yet today.',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                ...platformItems.map((item) => Padding(
+                      padding: const EdgeInsets.only(bottom: OlozSpacing.s12),
+                      child: _PlatformReelRow(item: item, colors: colors),
+                    )),
             ],
           ),
         ),
@@ -496,36 +541,7 @@ List<_PlatformReelsItemData> _buildPlatformItems(
   OlozColors colors,
 ) {
   if (platformList == null || platformList.isEmpty) {
-    return [
-      _PlatformReelsItemData(
-        name: 'Instagram',
-        count: 142,
-        fraction: 1,
-        barColor: colors.reel,
-        icon: Icons.camera_alt_outlined,
-      ),
-      _PlatformReelsItemData(
-        name: 'TikTok',
-        count: 84,
-        fraction: 84 / 142,
-        barColor: colors.reel.withValues(alpha: 0.85),
-        icon: Icons.music_note_outlined,
-      ),
-      _PlatformReelsItemData(
-        name: 'YouTube Shorts',
-        count: 48,
-        fraction: 48 / 142,
-        barColor: colors.reel.withValues(alpha: 0.70),
-        icon: Icons.play_arrow_outlined,
-      ),
-      _PlatformReelsItemData(
-        name: 'Facebook',
-        count: 12,
-        fraction: 12 / 142,
-        barColor: colors.reel.withValues(alpha: 0.55),
-        icon: Icons.thumb_up_alt_outlined,
-      ),
-    ];
+    return const <_PlatformReelsItemData>[];
   }
 
   final maxCount = platformList.fold<int>(

@@ -102,9 +102,9 @@ class SearchQueryNotifier extends Notifier<String> {
 final searchQueryProvider =
     NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
 
-/// Reference date anchor (defaults to canonical dataset: Friday, Nov 6, 2026).
+/// Reference date anchor (defaults to current local date).
 final referenceDateProvider =
-    Provider<DateTime>((ref) => DateTime(2026, 11, 6));
+    Provider<DateTime>((ref) => DateTime.now());
 
 /// Computed (startDay, endDay) string tuple based on range selection.
 final dateRangeProvider = Provider<(String start, String end)>((ref) {
