@@ -21,45 +21,47 @@ class OlozNavBar extends StatelessWidget {
     final colors = context.olozColors;
 
     return Container(
-      height: 64,
       decoration: BoxDecoration(
         color: colors.surface,
         border: Border(top: BorderSide(color: colors.border)),
       ),
       child: SafeArea(
         top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _NavBarItem(
-              icon: Icons.home_outlined,
-              selectedIcon: Icons.home_rounded,
-              label: 'Home',
-              isSelected: currentTab == OlozTab.home,
-              onTap: () => onTabSelected(OlozTab.home),
-            ),
-            _NavBarItem(
-              icon: Icons.play_circle_outline_rounded,
-              selectedIcon: Icons.play_circle_filled_rounded,
-              label: 'Reels',
-              isSelected: currentTab == OlozTab.reels,
-              onTap: () => onTabSelected(OlozTab.reels),
-            ),
-            _NavBarItem(
-              icon: Icons.apps_outlined,
-              selectedIcon: Icons.apps_rounded,
-              label: 'Apps',
-              isSelected: currentTab == OlozTab.apps,
-              onTap: () => onTabSelected(OlozTab.apps),
-            ),
-            _NavBarItem(
-              icon: Icons.tune_rounded,
-              selectedIcon: Icons.tune_rounded,
-              label: 'Settings',
-              isSelected: currentTab == OlozTab.settings,
-              onTap: () => onTabSelected(OlozTab.settings),
-            ),
-          ],
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavBarItem(
+                icon: Icons.home_outlined,
+                selectedIcon: Icons.home_rounded,
+                label: 'Home',
+                isSelected: currentTab == OlozTab.home,
+                onTap: () => onTabSelected(OlozTab.home),
+              ),
+              _NavBarItem(
+                icon: Icons.play_circle_outline_rounded,
+                selectedIcon: Icons.play_circle_filled_rounded,
+                label: 'Reels',
+                isSelected: currentTab == OlozTab.reels,
+                onTap: () => onTabSelected(OlozTab.reels),
+              ),
+              _NavBarItem(
+                icon: Icons.apps_outlined,
+                selectedIcon: Icons.apps_rounded,
+                label: 'Apps',
+                isSelected: currentTab == OlozTab.apps,
+                onTap: () => onTabSelected(OlozTab.apps),
+              ),
+              _NavBarItem(
+                icon: Icons.tune_rounded,
+                selectedIcon: Icons.tune_rounded,
+                label: 'Settings',
+                isSelected: currentTab == OlozTab.settings,
+                onTap: () => onTabSelected(OlozTab.settings),
+              ),
+            ],
+          ),
         ),
       ),
     );

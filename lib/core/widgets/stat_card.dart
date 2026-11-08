@@ -131,9 +131,13 @@ class StatCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: StyledStatValue(
-                        value: value,
-                        fontSize: 34,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: StyledStatValue(
+                          value: value,
+                          fontSize: 34,
+                        ),
                       ),
                     ),
                     if (delta != null) ...[
