@@ -34,7 +34,7 @@ class BootReceiver : BroadcastReceiver() {
 
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_DATE_CHANGED,
-            Intent.ACTION_TIME_SET -> {
+            Intent.ACTION_TIME_CHANGED -> {
                 // Midnight or timezone rollover: trigger backfill to split sessions at calendar boundary
                 if (isTrackingEnabled) {
                     val serviceIntent = Intent(context, TrackingForegroundService::class.java).apply {

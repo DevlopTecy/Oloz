@@ -38,7 +38,7 @@ class UsageBackfillWorker(
         }
     }
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val collector = UsageCollector(applicationContext)
         if (!collector.hasUsageStatsPermission()) {
             return Result.success()

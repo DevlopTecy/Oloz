@@ -246,7 +246,7 @@ class UsageCollector(private val context: Context) {
     }
 
     fun resolveCategory(packageName: String): String {
-        val lower = packageName.toLowerCase(Locale.ROOT)
+        val lower = packageName.lowercase(Locale.ROOT)
         if (lower.contains("instagram") || lower.contains("tiktok") || lower.contains("facebook") ||
             lower.contains("twitter") || lower.contains("threads") || lower.contains("reddit") ||
             lower.contains("snapchat") || lower.contains("linkedin")) {
@@ -284,7 +284,7 @@ class UsageCollector(private val context: Context) {
     }
 
     fun isShortVideoApp(packageName: String): Boolean {
-        val lower = packageName.toLowerCase(Locale.ROOT)
+        val lower = packageName.lowercase(Locale.ROOT)
         return lower.contains("instagram") ||
                 lower.contains("tiktok") ||
                 lower.contains("youtube") ||
