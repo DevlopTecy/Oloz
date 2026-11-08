@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
+import 'package:oloz/core/widgets/ambient_background.dart';
 import 'package:oloz/core/widgets/oloz_nav_bar.dart';
 import 'package:oloz/core/widgets/oloz_sidebar.dart';
 
@@ -49,12 +50,14 @@ class _ResponsiveShellState extends State<ResponsiveShell> {
                   },
                 ),
                 Expanded(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: OlozSpacing.maxContentWidthDesktop,
+                  child: AmbientBackground(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: OlozSpacing.maxContentWidthDesktop,
+                        ),
+                        child: widget.child,
                       ),
-                      child: widget.child,
                     ),
                   ),
                 ),
@@ -66,9 +69,11 @@ class _ResponsiveShellState extends State<ResponsiveShell> {
         // Mobile layout
         return Scaffold(
           backgroundColor: colors.bg,
-          body: SafeArea(
-            bottom: false,
-            child: widget.child,
+          body: AmbientBackground(
+            child: SafeArea(
+              bottom: false,
+              child: widget.child,
+            ),
           ),
           bottomNavigationBar: OlozNavBar(
             currentTab: widget.currentTab,

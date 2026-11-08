@@ -313,8 +313,8 @@ void main() {
       await pumpScreen(tester, const SettingsScreen());
 
       expect(find.text('Settings'), findsOneWidget);
-      expect(find.text('Your account'), findsOneWidget);
-      expect(find.text('Synced'), findsOneWidget);
+      expect(find.text('100% On-Device & Private'), findsOneWidget);
+      expect(find.text('Offline'), findsOneWidget);
       expect(find.text('Preferences'), findsOneWidget);
       expect(find.text('Goals and limits'), findsOneWidget);
       expect(find.text('6h · 350 reels'), findsOneWidget);
@@ -328,8 +328,8 @@ void main() {
       expect(find.text('Devices'), findsOneWidget);
       expect(find.text('This phone'), findsOneWidget);
       expect(find.text('Live'), findsOneWidget);
-      expect(find.text('Windows PC'), findsOneWidget);
-      expect(find.text('Synced 2m ago'), findsOneWidget);
+      expect(find.text('Local database'), findsOneWidget);
+      expect(find.text('Active'), findsOneWidget);
       await cleanUp(tester);
     });
 

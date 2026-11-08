@@ -48,14 +48,21 @@ class Ring extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            CustomPaint(
-              size: Size(size, size),
-              painter: _RingPainter(
-                progress: progress.clamp(0.0, 1.0),
-                trackColor: bgTrackColor,
-                strokeColor: strokeColor,
-                strokeWidth: strokeWidth,
-              ),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: progress.clamp(0.0, 1.0)),
+              duration: const Duration(milliseconds: 650),
+              curve: Curves.easeOutCubic,
+              builder: (context, animatedVal, _) {
+                return CustomPaint(
+                  size: Size(size, size),
+                  painter: _RingPainter(
+                    progress: animatedVal,
+                    trackColor: bgTrackColor,
+                    strokeColor: strokeColor,
+                    strokeWidth: strokeWidth,
+                  ),
+                );
+              },
             ),
             ?contentWidget,
           ],

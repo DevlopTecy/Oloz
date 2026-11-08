@@ -25,12 +25,16 @@ void main() async {
         ..where((tbl) => tbl.package.equals('com.zhiliaoapp.musically')))
       .go();
 
+  final onboardedVal = await db.settingsDao.getSetting('onboarded');
+  final initialLocation =
+      onboardedVal == 'true' ? '/home' : '/onboarding/welcome';
+
   runApp(
     ProviderScope(
       overrides: [
         databaseProvider.overrideWithValue(db),
       ],
-      child: const OlozApp(),
+      child: OlozApp(initialLocation: initialLocation),
     ),
   );
 }

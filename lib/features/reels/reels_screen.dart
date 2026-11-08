@@ -17,7 +17,6 @@ class ReelsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.olozColors;
     final isDesktop = MediaQuery.sizeOf(context).width >= 720;
 
     final totalReelsAsync = ref.watch(totalReelsProvider);
@@ -32,7 +31,7 @@ class ReelsScreen extends ConsumerWidget {
         dailyGoal > 0 ? (totalReels / dailyGoal).clamp(0.0, 1.0) : 0.0;
 
     return Scaffold(
-      backgroundColor: colors.bg,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: isDesktop
             ? _DesktopReelsContent(

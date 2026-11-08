@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
 import 'package:oloz/core/utils/formatters.dart';
+import 'package:oloz/core/widgets/segmented_pill.dart';
 import 'package:oloz/data/providers/app_providers.dart';
 
 class OnboardingGoalScreen extends ConsumerStatefulWidget {
@@ -16,6 +17,8 @@ class OnboardingGoalScreen extends ConsumerStatefulWidget {
 class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
   int _screenTimeMs = 6 * 60 * 60 * 1000; // 6h 00m
   int _reelsGoal = 350;
+  int _reminderIntervalMin = 30;
+  ThemeMode _selectedTheme = ThemeMode.system;
 
   void _adjustTime(int deltaMs) {
     setState(() {
@@ -34,6 +37,8 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
 
   Future<void> _saveAndFinish() async {
     final limitRepo = ref.read(limitRepositoryProvider);
+    final settingsRepo = ref.read(settingsRepositoryProvider);
+
     await limitRepo.setLimit(
       scope: 'total',
       dailyLimitMs: _screenTimeMs,
@@ -42,6 +47,24 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
       scope: 'reels_total',
       dailyLimitReels: _reelsGoal,
     );
+    await settingsRepo.setReminderInterval(_reminderIntervalMin);
+
+    final themeStr = switch (_selectedTheme) {
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
+      ThemeMode.system => 'auto',
+    };
+    await settingsRepo.setTheme(themeStr);
+    ref.read(themeModeProvider.notifier).setThemeMode(_selectedTheme);
+    await settingsRepo.setOnboarded(onboarded: true);
+
+    if (mounted) {
+      context.go('/home');
+    }
+  }
+
+  Future<void> _skip() async {
+    await ref.read(settingsRepositoryProvider).setOnboarded(onboarded: true);
     if (mounted) {
       context.go('/home');
     }
@@ -54,16 +77,18 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
     return Scaffold(
       backgroundColor: colors.bg,
       body: SafeArea(
-        child: ListView(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
             horizontal: OlozSpacing.screenPaddingMobile,
             vertical: OlozSpacing.s16,
           ),
-          children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Align(
               alignment: Alignment.topRight,
               child: TextButton(
-                onPressed: () => context.go('/home'),
+                onPressed: _skip,
                 child: Text(
                   'Skip',
                   style: TextStyle(
@@ -234,7 +259,136 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
                 ),
               ),
 
-              const SizedBox(height: OlozSpacing.s24),
+              const SizedBox(height: OlozSpacing.s12),
+
+              // Card 3: Break reminder
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OlozSpacing.s16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colors.border),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Break reminder',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: colors.text,
+                            ),
+                          ),
+                          Text(
+                            'Nudge during long sessions',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 11,
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SegmentedPill(
+                      options: const ['15m', '30m', '45m', 'Off'],
+                      selectedIndex: switch (_reminderIntervalMin) {
+                        15 => 0,
+                        30 => 1,
+                        45 => 2,
+                        _ => 3,
+                      },
+                      horizontalPadding: 6,
+                      verticalPadding: 3,
+                      onChanged: (idx) {
+                        setState(() {
+                          _reminderIntervalMin = switch (idx) {
+                            0 => 15,
+                            1 => 30,
+                            2 => 45,
+                            _ => 0,
+                          };
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OlozSpacing.s12),
+
+              // Card 4: Appearance Customizer
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OlozSpacing.s16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colors.border),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Appearance',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: colors.text,
+                            ),
+                          ),
+                          Text(
+                            'Theme mode',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 11,
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SegmentedPill(
+                      options: const ['Light', 'Dark', 'Auto'],
+                      selectedIndex: switch (_selectedTheme) {
+                        ThemeMode.light => 0,
+                        ThemeMode.dark => 1,
+                        ThemeMode.system => 2,
+                      },
+                      horizontalPadding: 6,
+                      verticalPadding: 3,
+                      onChanged: (idx) {
+                        setState(() {
+                          _selectedTheme = switch (idx) {
+                            0 => ThemeMode.light,
+                            1 => ThemeMode.dark,
+                            _ => ThemeMode.system,
+                          };
+                        });
+                        ref
+                            .read(themeModeProvider.notifier)
+                            .setThemeMode(_selectedTheme);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OlozSpacing.s16),
 
               // Page dots (third dot active)
               Row(
@@ -248,7 +402,7 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
                 ],
               ),
 
-              const SizedBox(height: OlozSpacing.s32),
+              const SizedBox(height: OlozSpacing.s20),
 
               // Button "Done" in #5870C2
               SizedBox(
@@ -281,7 +435,7 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
                 width: double.infinity,
                 height: 44,
                 child: TextButton(
-                  onPressed: () => context.go('/home'),
+                  onPressed: _skip,
                   child: Text(
                     'Skip',
                     style: TextStyle(
@@ -296,6 +450,7 @@ class _OnboardingGoalScreenState extends ConsumerState<OnboardingGoalScreen> {
               const SizedBox(height: OlozSpacing.s8),
             ],
           ),
+        ),
       ),
     );
   }

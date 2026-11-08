@@ -250,8 +250,8 @@ class TrackingBridge(
                 val reels = (call.argument<Number>("reels"))?.toInt() ?: 0
                 val minutes = (call.argument<Number>("minutes"))?.toInt() ?: 0
                 TrackingForegroundService.updateStats(context, reels, minutes)
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)) {
-                    com.oloz.oloz.overlay.OverlayCounterService.show(context, reels, minutes)
+                if (com.oloz.oloz.overlay.OverlayCounterService.isShowing) {
+                    com.oloz.oloz.overlay.OverlayCounterService.update(context, reels, minutes)
                 }
                 result.success(true)
             }

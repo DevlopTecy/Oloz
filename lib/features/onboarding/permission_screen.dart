@@ -24,7 +24,14 @@ class OnboardingPermissionScreen extends ConsumerWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: TextButton(
-                  onPressed: () => context.go('/home'),
+                  onPressed: () async {
+                    await ref
+                        .read(settingsRepositoryProvider)
+                        .setOnboarded(onboarded: true);
+                    if (context.mounted) {
+                      context.go('/home');
+                    }
+                  },
                   child: Text(
                     'Skip',
                     style: TextStyle(
@@ -148,7 +155,9 @@ class OnboardingPermissionScreen extends ConsumerWidget {
                 height: 52,
                 child: FilledButton(
                   onPressed: () async {
-                    await ref.read(trackingServiceProvider).requestUsageAccess();
+                    final tracking = ref.read(trackingServiceProvider);
+                    await tracking.requestUsageAccess();
+                    await tracking.requestAccessibility();
                     if (context.mounted) {
                       context.go('/onboarding/goal');
                     }

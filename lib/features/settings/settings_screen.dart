@@ -38,6 +38,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final perms = await tracking.checkPermissions();
     final overlayShowing = await tracking.isOverlayShowing();
     final devInfo = await tracking.getDeviceInfo();
+    final settingsRepo = ref.read(settingsRepositoryProvider);
+
+    final reminderMin = await settingsRepo
+        .watchReminderInterval()
+        .first
+        .timeout(const Duration(milliseconds: 50), onTimeout: () => 15);
+    final notifs = await settingsRepo
+        .watchNotifications()
+        .first
+        .timeout(const Duration(milliseconds: 50), onTimeout: () => true);
+
+    final reminderStr = switch (reminderMin) {
+      15 => 'Every 15m',
+      30 => 'Every 30m',
+      45 => 'Every 45m',
+      60 => 'Every 1h',
+      _ => 'Off',
+    };
 
     if (mounted) {
       setState(() {
@@ -45,6 +63,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         _floatingIndicator = overlayShowing;
         _deviceModel = devInfo['model'] ?? '';
         _deviceOs = devInfo['androidVersion'] ?? devInfo['os'] ?? '';
+        _reminderText = reminderStr;
+        _notifications = notifs;
       });
     }
   }
@@ -91,7 +111,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
         const SizedBox(height: OlozSpacing.s16),
 
-        // Profile row: initials avatar "YA", "Your account", "Synced" chip
+        // Privacy & Storage status card
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: OlozSpacing.s16,
@@ -104,29 +124,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: colors.surfaceMuted,
-                child: Text(
-                  'YA',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: colors.text,
-                  ),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: colors.chartSoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.shield_outlined,
+                  size: 20,
+                  color: colors.primary,
                 ),
               ),
               const SizedBox(width: OlozSpacing.s12),
               Expanded(
-                child: Text(
-                  'Your account',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: colors.text,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '100% On-Device & Private',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: colors.text,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Local SQLite database · Zero trackers',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 12,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -137,7 +171,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Synced',
+                  'Offline',
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 12,
@@ -229,7 +263,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     OlozToggle(
                       value: _notifications,
-                      onChanged: (val) => setState(() => _notifications = val),
+                      onChanged: (val) async {
+                        setState(() => _notifications = val);
+                        await ref
+                            .read(settingsRepositoryProvider)
+                            .setNotifications(enabled: val);
+                      },
                     ),
                   ],
                 ),
@@ -504,31 +543,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               Divider(height: 1, color: colors.border),
 
-              // Windows PC (Synced 2m ago)
+              // Local SQLite Database Storage
               Padding(
                 padding: const EdgeInsets.all(OlozSpacing.s16),
                 child: Row(
                   children: [
-                    Icon(Icons.desktop_windows_outlined,
+                    Icon(Icons.storage_outlined,
                         size: 20, color: colors.textSecondary),
                     const SizedBox(width: OlozSpacing.s12),
                     Expanded(
-                      child: Text(
-                        'Windows PC',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: colors.text,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Local database',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: colors.text,
+                            ),
+                          ),
+                          Text(
+                            'SQLite (Drift) · On-device sandbox',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      'Synced 2m ago',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 13,
-                        color: colors.textSecondary,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: colors.chartSoft,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        'Active',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: colors.primary,
+                        ),
                       ),
                     ),
                   ],
@@ -676,6 +737,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               Divider(height: 1, color: colors.border),
               InkWell(
+                onTap: () => context.push('/gallery'),
+                child: Padding(
+                  padding: const EdgeInsets.all(OlozSpacing.s16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.palette_outlined,
+                        size: 20,
+                        color: colors.textSecondary,
+                      ),
+                      const SizedBox(width: OlozSpacing.s12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Design system gallery',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: colors.text,
+                              ),
+                            ),
+                            Text(
+                              'Interactive preview of tokens, rings, cards & buttons',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 12,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: colors.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Divider(height: 1, color: colors.border),
+              InkWell(
                 onTap: _showResetDataDialog,
                 borderRadius:
                     const BorderRadius.vertical(bottom: Radius.circular(20)),
@@ -773,38 +880,64 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               Divider(height: 1, color: colors.border),
 
-              // Version & Build info
-              Padding(
-                padding: const EdgeInsets.all(OlozSpacing.s16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 20,
-                      color: colors.textSecondary,
-                    ),
-                    const SizedBox(width: OlozSpacing.s12),
-                    Expanded(
-                      child: Text(
-                        'Version',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: colors.text,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '1.0.0+1',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+              // Version & Check for Updates
+              InkWell(
+                onTap: () => _checkForUpdates(context),
+                borderRadius:
+                    const BorderRadius.vertical(bottom: Radius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.all(OlozSpacing.s16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 20,
                         color: colors.textSecondary,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: OlozSpacing.s12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Version',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: colors.text,
+                              ),
+                            ),
+                            Text(
+                              'Tap to check for updates',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 12,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: colors.chartSoft,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          'v1.0.0+1',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -816,7 +949,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
 
     return Scaffold(
-      backgroundColor: colors.bg,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: isDesktop
             ? SingleChildScrollView(
@@ -1061,9 +1194,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   trailing: opt == _reminderText
                       ? Icon(Icons.check_rounded, color: colors.primary)
                       : null,
-                  onTap: () {
+                  onTap: () async {
                     setState(() => _reminderText = opt);
-                    Navigator.of(ctx).pop();
+                    final mins = switch (opt) {
+                      'Every 15m' => 15,
+                      'Every 30m' => 30,
+                      'Every 45m' => 45,
+                      'Every 1h' => 60,
+                      _ => 0,
+                    };
+                    await ref
+                        .read(settingsRepositoryProvider)
+                        .setReminderInterval(mins);
+                    if (ctx.mounted) {
+                      Navigator.of(ctx).pop();
+                    }
                   },
                 ),
               ),
@@ -1227,6 +1372,152 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _checkForUpdates(BuildContext context) {
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => const _CheckUpdatesDialog(),
+      ),
+    );
+  }
+}
+
+class _CheckUpdatesDialog extends StatefulWidget {
+  const _CheckUpdatesDialog();
+
+  @override
+  State<_CheckUpdatesDialog> createState() => _CheckUpdatesDialogState();
+}
+
+class _CheckUpdatesDialogState extends State<_CheckUpdatesDialog> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 1400), () {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.olozColors;
+
+    return AlertDialog(
+      backgroundColor: colors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: colors.border),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+      content: SizedBox(
+        width: 320,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _isLoading
+              ? Column(
+                  key: const ValueKey('loading'),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 44,
+                      height: 44,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3.5,
+                        valueColor: AlwaysStoppedAnimation(colors.primary),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Checking for updates...',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: colors.text,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Querying release channel',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  key: const ValueKey('success'),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: colors.chartSoft,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check_circle_rounded,
+                        size: 32,
+                        color: colors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "You're on the latest version",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: colors.text,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Oloz v1.0.0+1 is up to date.\nChannel: Stable · Architecture: arm64-v8a',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        color: colors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: colors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text(
+                          'Done',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

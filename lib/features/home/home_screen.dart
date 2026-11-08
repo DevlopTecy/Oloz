@@ -39,7 +39,7 @@ class HomeScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: colors.bg,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: isDesktop
             ? _DesktopHomeContent(
@@ -93,64 +93,32 @@ class _MobileHomeContent extends ConsumerWidget {
         vertical: OlozSpacing.s16,
       ),
       children: [
-        // Header: Oloz Logo mark left, gallery link + 32px avatar right
+        // Header: Oloz wordmark left, 32px avatar right
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: colors.chart, width: 2.5),
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 7,
-                      height: 7,
-                      decoration: BoxDecoration(
-                        color: colors.reel,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: OlozSpacing.s8),
-                Text(
-                  'Oloz',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: colors.text,
-                  ),
-                ),
-              ],
+            Text(
+              'Oloz',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+                color: colors.text,
+              ),
             ),
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.palette_outlined, size: 20),
-                  tooltip: 'Component Gallery',
-                  onPressed: () => context.push('/gallery'),
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: colors.surfaceMuted,
+              child: Text(
+                'YA',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: colors.text,
                 ),
-                const SizedBox(width: 4),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: colors.surfaceMuted,
-                  child: Text(
-                    'YA',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: colors.text,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),
@@ -453,11 +421,6 @@ class _DesktopHomeContent extends ConsumerWidget {
                   ),
                 ),
               ],
-            ),
-            IconButton(
-              icon: const Icon(Icons.palette_outlined, size: 22),
-              tooltip: 'Component Gallery',
-              onPressed: () => context.push('/gallery'),
             ),
           ],
         ),

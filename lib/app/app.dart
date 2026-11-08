@@ -2,13 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:oloz/app/router.dart';
 import 'package:oloz/core/theme/oloz_theme.dart';
 import 'package:oloz/data/providers/app_providers.dart';
 
 class OlozApp extends ConsumerStatefulWidget {
-  const OlozApp({super.key});
+  const OlozApp({this.initialLocation = '/home', super.key});
+
+  final String initialLocation;
 
   @override
   ConsumerState<OlozApp> createState() => _OlozAppState();
@@ -17,10 +20,12 @@ class OlozApp extends ConsumerStatefulWidget {
 class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
   StreamSubscription<Map<dynamic, dynamic>>? _eventSub;
   Timer? _periodicSyncTimer;
+  late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
+    _router = createAppRouter(initialLocation: widget.initialLocation);
     WidgetsBinding.instance.addObserver(this);
     _initializeTracking();
   }
@@ -37,7 +42,6 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _syncUsage();
-      unawaited(ref.read(trackingServiceProvider).hideOverlayCounter());
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden) {
       _syncUsage();
@@ -51,17 +55,6 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
           minutes: minutes,
         ),
       );
-      unawaited(() async {
-        try {
-          final perms = await tracking.checkPermissions();
-          if (perms.overlay) {
-            await tracking.showOverlayCounter(
-              count: reels,
-              minutes: minutes,
-            );
-          }
-        } on Object catch (_) {}
-      }());
     }
   }
 
@@ -146,7 +139,7 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
       theme: OlozTheme.lightTheme(),
       darkTheme: OlozTheme.darkTheme(),
       themeMode: themeMode,
-      routerConfig: goRouter,
+      routerConfig: _router,
     );
   }
 }

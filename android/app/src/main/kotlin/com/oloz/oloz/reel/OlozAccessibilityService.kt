@@ -1,13 +1,23 @@
 package com.oloz.oloz.reel
 
 import android.accessibilityservice.AccessibilityService
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.Rect
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.oloz.oloz.tracking.TrackingBridge
+import com.oloz.oloz.tracking.TrackingForegroundService
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class OlozAccessibilityService : AccessibilityService() {
@@ -110,12 +120,55 @@ class OlozAccessibilityService : AccessibilityService() {
         // Process through ReelDetector
         val detected = detector.processEvent(eventModel)
         if (detected != null) {
-            TrackingBridge.notifyReelDetected(
-                packageId = detected.packageId,
-                dwellMs = detected.dwellMs,
-                timestampMs = detected.timestampMs,
-                confidence = detected.confidence
-            )
+            Log.d("OlozReel", "Detected reel in ${detected.packageId} (dwell: ${detected.dwellMs}ms)")
+            recordReelInDb(detected.packageId, detected.dwellMs, detected.timestampMs)
+
+            Handler(Looper.getMainLooper()).post {
+                TrackingBridge.notifyReelDetected(
+                    packageId = detected.packageId,
+                    dwellMs = detected.dwellMs,
+                    timestampMs = detected.timestampMs,
+                    confidence = detected.confidence
+                )
+            }
+        }
+    }
+
+    private fun recordReelInDb(packageId: String, dwellMs: Long, timestampMs: Long) {
+        try {
+            val dbFile = File(filesDir.parentFile, "app_flutter/oloz.sqlite")
+            if (dbFile.exists()) {
+                val db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+                val day = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(timestampMs))
+                val cv = ContentValues().apply {
+                    put("package", packageId)
+                    put("device_id", "local_device")
+                    put("at_ms", timestampMs)
+                    put("dwell_ms", dwellMs)
+                    put("day", day)
+                }
+                db.insert("reel_events", null, cv)
+
+                // Query today's total reels
+                val cursor = db.rawQuery("SELECT COUNT(*) FROM reel_events WHERE day = ?", arrayOf(day))
+                var todayReels = 0
+                if (cursor.moveToFirst()) {
+                    todayReels = cursor.getInt(0)
+                }
+                cursor.close()
+                db.close()
+
+                Log.d("OlozReel", "Saved reel to SQLite. Today's total reels: $todayReels")
+
+                // Update persistent background notification
+                TrackingForegroundService.updateStats(
+                    this,
+                    todayReels,
+                    TrackingForegroundService.currentMinutes
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("OlozReel", "Failed to record reel into SQLite", e)
         }
     }
 

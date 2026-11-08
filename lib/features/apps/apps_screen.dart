@@ -31,7 +31,6 @@ class _AppsScreenState extends ConsumerState<AppsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.olozColors;
     final isDesktop = MediaQuery.sizeOf(context).width >= 720;
 
     final appsSummaryAsync = ref.watch(appsSummaryProvider);
@@ -74,7 +73,7 @@ class _AppsScreenState extends ConsumerState<AppsScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: colors.bg,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: isDesktop
             ? _DesktopAppsContent(

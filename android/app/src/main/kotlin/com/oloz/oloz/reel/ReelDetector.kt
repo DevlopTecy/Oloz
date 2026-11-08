@@ -39,44 +39,25 @@ class ReelDetector(
 
         when (event.eventType) {
             TYPE_WINDOW_STATE_CHANGED -> {
+                val className = event.className ?: ""
                 val matchesMarker = event.viewId != null && appConfig.surfaceMarkers.any {
                     event.viewId.contains(it, ignoreCase = true)
                 }
-                val className = event.className ?: ""
                 val matchesClass = className.contains("Reel", ignoreCase = true) ||
                         className.contains("Shorts", ignoreCase = true) ||
                         className.contains("Clips", ignoreCase = true)
 
-                if (matchesMarker || matchesClass) {
-                    if (!state.isSurfaceActive) {
-                        state.isSurfaceActive = true
-                        state.isApproxSurface = false
+                if (matchesMarker || matchesClass || event.isFullScreenScroll) {
+                    state.isSurfaceActive = true
+                    state.isApproxSurface = false
+                    if (state.currentReelStartTime == 0L) {
                         state.currentReelStartTime = event.timestampMs
-                        state.lastCountedReelTime = 0L
-                        state.pendingSettle = false
                     }
-                } else if (className.contains("Activity", ignoreCase = true) && !matchesMarker) {
-                    // Leaving reel surface
-                    state.isSurfaceActive = false
-                    state.pendingSettle = false
                 }
                 return null
             }
 
             TYPE_WINDOW_CONTENT_CHANGED -> {
-                // If marker appears in content change, activate surface
-                if (!state.isSurfaceActive && event.viewId != null) {
-                    val matchesMarker = appConfig.surfaceMarkers.any {
-                        event.viewId.contains(it, ignoreCase = true)
-                    }
-                    if (matchesMarker) {
-                        state.isSurfaceActive = true
-                        state.isApproxSurface = false
-                        state.currentReelStartTime = event.timestampMs
-                    }
-                }
-
-                // If a scroll was pending settle, settle it on content change after debounce
                 if (state.pendingSettle) {
                     val timeSinceScroll = event.timestampMs - state.lastScrollTime
                     if (timeSinceScroll >= timing.debounceMs) {
@@ -99,49 +80,38 @@ class ReelDetector(
             }
 
             TYPE_VIEW_SCROLLED -> {
-                // Fallback heuristic: full screen scroll activates approx surface if inactive
-                if (!state.isSurfaceActive && event.isFullScreenScroll) {
+                val now = event.timestampMs
+
+                // In a supported video platform, any scroll in the app is candidate reel activity
+                if (!state.isSurfaceActive) {
                     state.isSurfaceActive = true
                     state.isApproxSurface = true
-                    state.currentReelStartTime = event.timestampMs
+                    state.currentReelStartTime = now
+                    state.lastScrollTime = now
+                    return null
                 }
 
-                if (!state.isSurfaceActive) return null
-
-                // Check pager class hints
-                val className = event.className ?: ""
-                val isPager = appConfig.pagerClassHints.any { className.contains(it, ignoreCase = true) } ||
-                        event.isFullScreenScroll
-
-                if (!isPager) return null
-
-                // Dedup pull-to-refresh (scroll to top index 0 without dwell)
+                // Dedup pull-to-refresh
                 if (event.toIndex == 0 && state.lastScrollIndex == 0) {
                     return null
                 }
 
-                val now = event.timestampMs
-                val timeSinceLastScroll = now - state.lastScrollTime
+                val dwell = now - state.currentReelStartTime
                 state.lastScrollTime = now
                 if (event.toIndex >= 0) {
                     state.lastScrollIndex = event.toIndex
                 }
 
-                // Fast flick handling: if multiple swipes arrive within minDwellMs, keep updating reel start
-                val dwell = now - state.currentReelStartTime
-
                 if (dwell < timing.minDwellMs) {
-                    // Fast flick; mark pending settle so we count once settled
                     state.pendingSettle = true
                     return null
                 }
 
-                // Settle check and debounce from previous counted reel
                 if (now - state.lastCountedReelTime < timing.debounceMs) {
                     return null
                 }
 
-                // Valid reel completed!
+                // Reel completed
                 state.lastCountedReelTime = now
                 state.currentReelStartTime = now
                 state.pendingSettle = false

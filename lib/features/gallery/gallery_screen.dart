@@ -165,61 +165,67 @@ class _GalleryScreenState extends State<GalleryScreen> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: OlozSpacing.s12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Ring(
-                progress: 0.82,
-                center: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '286',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        color: colors.text,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Ring(
+                  size: 148,
+                  progress: 0.82,
+                  center: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '286',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          color: colors.text,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '64 left',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 12,
-                        color: colors.textSecondary,
+                      Text(
+                        '64 left',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          color: colors.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Ring(
-                progress: 0.85,
-                colorType: RingColor.indigo,
-                center: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '5h 07m',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: colors.text,
+                const SizedBox(width: OlozSpacing.s16),
+                Ring(
+                  size: 148,
+                  progress: 0.85,
+                  colorType: RingColor.indigo,
+                  center: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '5h 07m',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: colors.text,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '6h limit',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 12,
-                        color: colors.textSecondary,
+                      Text(
+                        '6h limit',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          color: colors.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: OlozSpacing.s24),
 

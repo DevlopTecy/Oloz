@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
+import 'package:oloz/data/providers/app_providers.dart';
 
-class OnboardingWelcomeScreen extends StatelessWidget {
+class OnboardingWelcomeScreen extends ConsumerWidget {
   const OnboardingWelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.olozColors;
 
     return Scaffold(
@@ -23,7 +25,14 @@ class OnboardingWelcomeScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: TextButton(
-                  onPressed: () => context.go('/home'),
+                  onPressed: () async {
+                    await ref
+                        .read(settingsRepositoryProvider)
+                        .setOnboarded(onboarded: true);
+                    if (context.mounted) {
+                      context.go('/home');
+                    }
+                  },
                   child: Text(
                     'Skip',
                     style: TextStyle(
