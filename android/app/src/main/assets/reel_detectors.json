@@ -3,7 +3,7 @@
   "apps": {
     "com.instagram.android": {
       "label": "Instagram",
-      "surfaceMarkers": ["clips_viewer", "clips_swipe_refresh_container", "reel_viewer"],
+      "surfaceMarkers": ["clips_viewer", "clips_swipe_refresh_container", "reel_viewer", "clips_video_container", "clips_tab"],
       "pagerClassHints": ["ViewPager2", "RecyclerView"]
     },
     "com.google.android.youtube": {
@@ -28,8 +28,7 @@
     }
   },
   "timing": {
-    "minDwellMs": 700,
-    "debounceMs": 500
+    "minDwellMs": 800,
+    "debounceMs": 600
   }
 }
-

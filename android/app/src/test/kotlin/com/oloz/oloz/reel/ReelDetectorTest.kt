@@ -264,5 +264,135 @@ class ReelDetectorTest {
         )
         assertNull("Below-dwell scroll must not count as completed reel", fastScroll)
     }
-}
 
+    @Test
+    fun testScrollingOnMainFeedNeverActivatesOrCountsReels() {
+        var time = 60000L
+
+        // User starts Instagram on Home feed
+        detector.processEvent(
+            AccessibilityEventModel(
+                packageName = "com.instagram.android",
+                eventType = ReelDetector.TYPE_WINDOW_STATE_CHANGED,
+                className = "com.instagram.mainactivity.MainActivity",
+                viewId = "feed_tab",
+                timestampMs = time
+            )
+        )
+        assertEquals(false, detector.isSurfaceActive("com.instagram.android"))
+
+        // User scrolls 5 times on the main feed to see photo posts
+        for (i in 1..5) {
+            time += 1500L
+            val result = detector.processEvent(
+                AccessibilityEventModel(
+                    packageName = "com.instagram.android",
+                    eventType = ReelDetector.TYPE_VIEW_SCROLLED,
+                    className = "androidx.recyclerview.widget.RecyclerView",
+                    viewId = "android:id/list",
+                    timestampMs = time,
+                    fromIndex = i * 2,
+                    toIndex = i * 2 + 1
+                )
+            )
+            assertNull("Scroll $i on main feed must not count as a reel", result)
+        }
+        assertEquals(false, detector.isSurfaceActive("com.instagram.android"))
+    }
+
+    @Test
+    fun testHoldingAndSpammingBetweenReelsDoesNotSpamCount() {
+        var time = 70000L
+
+        // 1. Enter reels surface
+        detector.processEvent(
+            AccessibilityEventModel(
+                packageName = "com.instagram.android",
+                eventType = ReelDetector.TYPE_WINDOW_STATE_CHANGED,
+                className = "com.instagram.modal.ModalActivity",
+                viewId = "clips_viewer",
+                timestampMs = time
+            )
+        )
+
+        // 2. User watches Reel 0 for 2000 ms
+        time += 2000L
+
+        // 3. User swipes to Reel 1
+        val firstSwipe = detector.processEvent(
+            AccessibilityEventModel(
+                packageName = "com.instagram.android",
+                eventType = ReelDetector.TYPE_VIEW_SCROLLED,
+                className = "androidx.viewpager2.widget.ViewPager2",
+                viewId = "clips_viewer",
+                timestampMs = time,
+                fromIndex = 0,
+                toIndex = 1
+            )
+        )
+        assertNotNull("First completed reel should be detected", firstSwipe)
+
+        // 4. Now user holds finger between Reel 1 and 2, spamming small drags back and forth every 100ms
+        for (i in 1..10) {
+            time += 100L
+            val spamResult = detector.processEvent(
+                AccessibilityEventModel(
+                    packageName = "com.instagram.android",
+                    eventType = ReelDetector.TYPE_VIEW_SCROLLED,
+                    className = "androidx.viewpager2.widget.ViewPager2",
+                    viewId = "clips_viewer",
+                    timestampMs = time,
+                    fromIndex = 1,
+                    toIndex = if (i % 2 == 0) 1 else 2
+                )
+            )
+            assertNull("Spam drag $i must not trigger a reel count", spamResult)
+        }
+
+        // 5. User settles on Reel 2 and watches for 1000 ms
+        time += 1000L
+        val settleEvent = detector.processEvent(
+            AccessibilityEventModel(
+                packageName = "com.instagram.android",
+                eventType = ReelDetector.TYPE_WINDOW_CONTENT_CHANGED,
+                className = "android.view.ViewGroup",
+                viewId = "clips_viewer",
+                timestampMs = time
+            )
+        )
+        assertNotNull("Settled reel after spam should be counted exactly once", settleEvent)
+    }
+
+    @Test
+    fun testCommentSectionScrollingIgnored() {
+        var time = 80000L
+
+        // 1. Enter reels surface
+        detector.processEvent(
+            AccessibilityEventModel(
+                packageName = "com.instagram.android",
+                eventType = ReelDetector.TYPE_WINDOW_STATE_CHANGED,
+                className = "com.instagram.modal.ModalActivity",
+                viewId = "clips_viewer",
+                timestampMs = time
+            )
+        )
+
+        // 2. Open comments sheet and scroll comments 4 times
+        for (i in 1..4) {
+            time += 1000L
+            val commentScroll = detector.processEvent(
+                AccessibilityEventModel(
+                    packageName = "com.instagram.android",
+                    eventType = ReelDetector.TYPE_VIEW_SCROLLED,
+                    className = "androidx.recyclerview.widget.RecyclerView",
+                    viewId = "com.instagram.android:id/layout_comment_thread",
+                    timestampMs = time,
+                    fromIndex = i,
+                    toIndex = i + 1
+                )
+            )
+            assertNull("Comment scroll $i must be ignored", commentScroll)
+        }
+    }
+}

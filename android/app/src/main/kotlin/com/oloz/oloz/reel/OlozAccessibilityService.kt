@@ -71,6 +71,19 @@ class OlozAccessibilityService : AccessibilityService() {
         val pkg = event.packageName?.toString() ?: return
         val detector = reelDetector ?: return
 
+        // Filter out non-target apps and reset state if left video apps
+        val trackedApps = setOf(
+            "com.instagram.android",
+            "com.google.android.youtube",
+            "com.zhiliaoapp.musically",
+            "com.ss.android.ugc.trill",
+            "com.facebook.katana"
+        )
+        if (!trackedApps.contains(pkg)) {
+            detector.reset(pkg)
+            return
+        }
+
         // Extract viewId and check full-screen height bounds without reading text
         var viewId: String? = null
         var isFullScreen = false
@@ -87,7 +100,7 @@ class OlozAccessibilityService : AccessibilityService() {
                 val rect = Rect()
                 source.getBoundsInScreen(rect)
                 val displayHeight = resources.displayMetrics.heightPixels
-                if (rect.height() >= (displayHeight * 0.85)) {
+                if (rect.height() >= (displayHeight * 0.80)) {
                     isFullScreen = true
                 }
             } catch (_: Exception) {
@@ -97,6 +110,19 @@ class OlozAccessibilityService : AccessibilityService() {
                     source.recycle()
                 }
             }
+        }
+
+        // Early reject comment sheets, dialogs, drawers
+        val lowerId = (viewId ?: "").lowercase()
+        if (lowerId.contains("comment") ||
+            lowerId.contains("reply") ||
+            lowerId.contains("composer") ||
+            lowerId.contains("sheet") ||
+            lowerId.contains("dialog") ||
+            lowerId.contains("thread") ||
+            lowerId.contains("bottom_sheet") ||
+            lowerId.contains("tray")) {
+            return
         }
 
         val eventModel = AccessibilityEventModel(
@@ -140,6 +166,26 @@ class OlozAccessibilityService : AccessibilityService() {
             if (dbFile.exists()) {
                 val db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
                 val day = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(timestampMs))
+
+                // De-duplicate: ignore if another reel was recorded for this package within 1000ms
+                val checkCursor = db.rawQuery(
+                    "SELECT at_ms FROM reel_events WHERE package = ? ORDER BY id DESC LIMIT 1",
+                    arrayOf(packageId)
+                )
+                var isDuplicate = false
+                if (checkCursor.moveToFirst()) {
+                    val lastAtMs = checkCursor.getLong(0)
+                    if (timestampMs - lastAtMs < 1000L) {
+                        isDuplicate = true
+                    }
+                }
+                checkCursor.close()
+
+                if (isDuplicate) {
+                    db.close()
+                    return
+                }
+
                 val cv = ContentValues().apply {
                     put("package", packageId)
                     put("device_id", "local_device")

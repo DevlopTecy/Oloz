@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:oloz/app/router.dart';
 import 'package:oloz/core/theme/oloz_theme.dart';
 import 'package:oloz/data/providers/app_providers.dart';
@@ -60,7 +59,6 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
 
   void _initializeTracking() {
     final tracking = ref.read(trackingServiceProvider);
-    final db = ref.read(databaseProvider);
 
     // 1. Start foreground tracking service
     unawaited(tracking.startTrackingService());
@@ -72,21 +70,10 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
     _eventSub = tracking.trackingEventStream.listen((event) {
       final type = event['type'] as String? ?? '';
       if (type == 'REEL_DETECTED') {
-        final pkg = event['package'] as String? ?? '';
-        final dwell = (event['dwellMs'] as num?)?.toInt() ?? 0;
-        final ts = (event['timestampMs'] as num?)?.toInt() ??
-            DateTime.now().millisecondsSinceEpoch;
-        final day = DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(ts));
-
-        unawaited(
-          tracking.recordNativeReelEvent(
-            db,
-            package: pkg,
-            dwellMs: dwell,
-            timestampMs: ts,
-            day: day,
-          ),
-        );
+        ref
+          ..invalidate(totalReelsProvider)
+          ..invalidate(thirtyDayReelsProvider)
+          ..invalidate(platformSplitProvider);
       } else if (type == 'USAGE_SYNC') {
         _syncUsage();
       }
