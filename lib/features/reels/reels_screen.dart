@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
 import 'package:oloz/core/widgets/delta_chip.dart';
@@ -20,11 +23,13 @@ class ReelsScreen extends ConsumerWidget {
     final totalReelsAsync = ref.watch(totalReelsProvider);
     final platformSplitAsync = ref.watch(platformSplitProvider);
     final thirtyDayReelsAsync = ref.watch(thirtyDayReelsProvider);
+    final reelsLimitAsync = ref.watch(reelsLimitProvider);
 
     final totalReels = totalReelsAsync.value ?? 0;
-    const dailyGoal = 350;
+    final dailyGoal = reelsLimitAsync.value ?? 350;
     final remaining = (dailyGoal - totalReels).clamp(0, dailyGoal);
-    final progress = (totalReels / dailyGoal).clamp(0.0, 1.0);
+    final progress =
+        dailyGoal > 0 ? (totalReels / dailyGoal).clamp(0.0, 1.0) : 0.0;
 
     return Scaffold(
       backgroundColor: colors.bg,
@@ -49,7 +54,7 @@ class ReelsScreen extends ConsumerWidget {
   }
 }
 
-class _MobileReelsContent extends StatelessWidget {
+class _MobileReelsContent extends ConsumerWidget {
   const _MobileReelsContent({
     required this.totalReels,
     required this.remaining,
@@ -65,10 +70,11 @@ class _MobileReelsContent extends StatelessWidget {
   final AsyncValue<List<DailyReelPoint>> thirtyDayReelsAsync;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.olozColors;
 
     final dayFormatter = DateFormat('E');
+    final fullFormatter = DateFormat('EEEE, MMM d');
     final now = DateTime.now();
     final points = thirtyDayReelsAsync.value;
     final last7Points = points != null && points.length >= 7
@@ -81,11 +87,14 @@ class _MobileReelsContent extends StatelessWidget {
       final count =
           last7Points != null ? last7Points[i].count.toDouble() : 0.0;
       final isToday = i == 6;
+      final durStr = '${count.toInt()} reels';
       return DailyBarItem(
         dayLabel: dayInitial,
         value: count,
+        formattedValue: durStr,
+        fullDayName: fullFormatter.format(date),
         semanticLabel:
-            '${dayFormatter.format(date)}${isToday ? ' (Today)' : ''}: ${count.toInt()} reels',
+            '${fullFormatter.format(date)}${isToday ? ' (Today)' : ''}: $durStr',
       );
     });
 
@@ -171,6 +180,78 @@ class _MobileReelsContent extends StatelessWidget {
         ),
 
         const SizedBox(height: OlozSpacing.s16),
+
+        if (totalReels == 0)
+          Container(
+            padding: const EdgeInsets.all(OlozSpacing.cardPadding),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: colors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded,
+                        size: 20, color: colors.reel),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Live Reel Detection',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: colors.text,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Oloz detects vertical swipe events in Instagram, YouTube Shorts, and Facebook. Enable the Oloz Accessibility Service in Settings to track reels automatically.',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 13,
+                    color: colors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  height: 42,
+                  child: OutlinedButton.icon(
+                    icon: Icon(Icons.add_circle_outline_rounded,
+                        size: 18, color: colors.reel),
+                    label: Text(
+                      'Simulate 1 Reel (Test Counter)',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: colors.reel,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                          color: colors.reel.withValues(alpha: 0.5)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => _simulateReel(context, ref),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+        if (totalReels == 0) const SizedBox(height: OlozSpacing.s16),
 
         // "By platform" card (4 rows, sentence case, peach bars in decreasing tints)
         Container(
@@ -527,6 +608,7 @@ class _PlatformReelsItemData {
     required this.fraction,
     required this.barColor,
     required this.icon,
+    this.package = '',
   });
 
   final String name;
@@ -534,6 +616,7 @@ class _PlatformReelsItemData {
   final double fraction;
   final Color barColor;
   final IconData icon;
+  final String package;
 }
 
 List<_PlatformReelsItemData> _buildPlatformItems(
@@ -559,6 +642,7 @@ List<_PlatformReelsItemData> _buildPlatformItems(
       fraction: fraction,
       barColor: colors.reel.withValues(alpha: 0.5 + 0.5 * fraction),
       icon: _getPlatformIcon(name),
+      package: p.package,
     );
   }).toList();
 }
@@ -583,11 +667,15 @@ class _PlatformReelRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: item.package.isNotEmpty
+          ? () => context.push('/apps/${item.package}')
+          : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -601,46 +689,80 @@ class _PlatformReelRow extends StatelessWidget {
                   child: Icon(item.icon, size: 16, color: colors.textSecondary),
                 ),
                 const SizedBox(width: OlozSpacing.s12),
+                Expanded(
+                  child: Text(
+                    item.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: colors.text,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Text(
-                  item.name,
+                  '${item.count}',
                   style: TextStyle(
                     fontFamily: 'Inter',
+                    fontFeatures: const [FontFeature.tabularFigures()],
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: colors.text,
                   ),
                 ),
+                if (item.package.isNotEmpty) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 16,
+                    color: colors.textSecondary.withValues(alpha: 0.5),
+                  ),
+                ],
               ],
             ),
-            Text(
-              '${item.count}',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontFeatures: const [FontFeature.tabularFigures()],
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: colors.text,
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: Container(
+                height: 5,
+                width: double.infinity,
+                color: colors.reelSoft,
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: item.fraction,
+                  child: Container(color: item.barColor),
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(3),
-          child: Container(
-            height: 5,
-            width: double.infinity,
-            color: colors.reelSoft,
-            alignment: Alignment.centerLeft,
-            child: FractionallySizedBox(
-              widthFactor: item.fraction,
-              child: Container(color: item.barColor),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
+}
+
+void _simulateReel(BuildContext context, WidgetRef ref) {
+  final db = ref.read(databaseProvider);
+  final tracking = ref.read(trackingServiceProvider);
+  final now = DateTime.now();
+  unawaited(
+    tracking.recordNativeReelEvent(
+      db,
+      package: 'com.instagram.android',
+      dwellMs: 4200,
+      timestampMs: now.millisecondsSinceEpoch,
+      day: DateFormat('yyyy-MM-dd').format(now),
+    ),
+  );
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Simulated reel recorded! Counter updated.'),
+      duration: Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
 }
 
 class _PeachSparklinePainter extends CustomPainter {

@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
 import 'package:oloz/core/utils/formatters.dart';
 import 'package:oloz/core/widgets/app_icon_tile.dart';
 import 'package:oloz/core/widgets/delta_chip.dart';
 import 'package:oloz/core/widgets/week_bars.dart';
+import 'package:oloz/data/db/daos/usage_dao.dart';
 import 'package:oloz/data/providers/app_providers.dart';
 import 'package:oloz/features/apps/set_limit_sheet.dart';
 
@@ -26,25 +28,32 @@ class AppDetailScreen extends ConsumerWidget {
     final appLimitAsync = ref.watch(appLimitProvider(package));
     final limitMs = appLimitAsync.value?.dailyLimitMs ?? (90 * 60 * 1000); // 1h 30m default
 
+    final summaryAsync = ref.watch(appDetailSummaryProvider(package));
+    final summary = summaryAsync.value;
+
+    final seriesAsync = ref.watch(appDailySeriesProvider(package));
+    final series = seriesAsync.value;
+
     final isInstagram = package.contains('instagram');
-    final appName = isInstagram ? 'Instagram' : _getAppName(package);
+    final appName = summary?.label ?? (isInstagram ? 'Instagram' : _getAppName(package));
     final appIcon = _getAppIcon(package);
 
-    // Canonical values for Instagram: 1h 48m, 142 reels, 23 opens, -18% delta
-    const usageMs = 108 * 60 * 1000; // 1h 48m
-    const reelsCount = 142;
-    const opensCount = 23;
-    final isOverLimit = usageMs > limitMs;
+    final usageMs = summary?.foregroundMs ?? (isInstagram ? 108 * 60 * 1000 : 0);
+    final reelsCount = summary?.reels ?? (isInstagram ? 142 : 0);
+    final opensCount = summary?.opens ?? (isInstagram ? 23 : 0);
+    final isOverLimit = limitMs > 0 && usageMs > limitMs;
 
-    const weekBars = [
-      DailyBarItem(dayLabel: 'S', value: 1.6, semanticLabel: 'Saturday 1h 36m'),
-      DailyBarItem(dayLabel: 'S', value: 2.1, semanticLabel: 'Sunday 2h 06m'),
-      DailyBarItem(dayLabel: 'M', value: 1.8, semanticLabel: 'Monday 1h 48m'),
-      DailyBarItem(dayLabel: 'T', value: 1.2, semanticLabel: 'Tuesday 1h 12m'),
-      DailyBarItem(dayLabel: 'W', value: 2.4, semanticLabel: 'Wednesday 2h 24m'),
-      DailyBarItem(dayLabel: 'T', value: 1.9, semanticLabel: 'Thursday 1h 54m'),
-      DailyBarItem(dayLabel: 'F', value: 1.8, semanticLabel: 'Friday (Today) 1h 48m'),
-    ];
+    final refDate = ref.watch(referenceDateProvider);
+    final weekBars = _buildAppWeekBars(series, refDate, usageMs);
+
+    // Calculate delta compared to yesterday if available
+    var deltaPct = -18;
+    if (series != null && series.length >= 2) {
+      final yestMs = series[series.length - 2].foregroundMs;
+      if (yestMs > 0) {
+        deltaPct = (((usageMs - yestMs) / yestMs) * 100).round();
+      }
+    }
 
     return Scaffold(
       backgroundColor: colors.bg,
@@ -66,15 +75,18 @@ class AppDetailScreen extends ConsumerWidget {
                   onPressed: () => context.pop(),
                 ),
                 const SizedBox(width: 8),
-                AppIconTile(icon: appIcon),
+                AppIconTile(packageNameOrName: package, icon: appIcon),
                 const SizedBox(width: OlozSpacing.s12),
-                Text(
-                  appName,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: colors.text,
+                Expanded(
+                  child: Text(
+                    appName,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: colors.text,
+                    ),
                   ),
                 ),
               ],
@@ -105,7 +117,7 @@ class AppDetailScreen extends ConsumerWidget {
                           color: colors.textSecondary,
                         ),
                       ),
-                      const DeltaChip(delta: -18),
+                      DeltaChip(delta: deltaPct),
                     ],
                   ),
                   const SizedBox(height: OlozSpacing.s12),
@@ -180,7 +192,7 @@ class AppDetailScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: OlozSpacing.s20),
-                  const WeekBars(
+                  WeekBars(
                     items: weekBars,
                   ),
                 ],
@@ -346,4 +358,49 @@ IconData _getAppIcon(String package) {
   if (package.contains('whatsapp')) return Icons.chat_bubble_outline;
   if (package.contains('reddit')) return Icons.reddit_outlined;
   return Icons.apps_outlined;
+}
+
+List<DailyBarItem> _buildAppWeekBars(
+  List<DailyUsagePoint>? series,
+  DateTime refDate,
+  int todayMs,
+) {
+  final dayFormatter = DateFormat('E');
+  final fullFormatter = DateFormat('EEEE, MMM d');
+
+  if (series == null || series.length < 7) {
+    return List.generate(7, (i) {
+      final date = refDate.subtract(Duration(days: 6 - i));
+      final dayInitial = dayFormatter.format(date).substring(0, 1);
+      final isToday = i == 6;
+      final ms = isToday ? todayMs : 0;
+      final durStr = OlozFormatters.formatDurationMs(ms);
+      return DailyBarItem(
+        dayLabel: dayInitial,
+        value: ms / (60 * 60 * 1000),
+        formattedValue: durStr,
+        fullDayName: fullFormatter.format(date),
+        semanticLabel:
+            '${fullFormatter.format(date)}${isToday ? ' (Today)' : ''}: $durStr',
+      );
+    });
+  }
+
+  return List.generate(7, (i) {
+    final pt = series[i];
+    final date =
+        DateTime.tryParse(pt.day) ?? refDate.subtract(Duration(days: 6 - i));
+    final dayInitial = dayFormatter.format(date).substring(0, 1);
+    final isToday = i == 6;
+    final ms = isToday && pt.foregroundMs == 0 ? todayMs : pt.foregroundMs;
+    final durStr = OlozFormatters.formatDurationMs(ms);
+    return DailyBarItem(
+      dayLabel: dayInitial,
+      value: ms / (60 * 60 * 1000),
+      formattedValue: durStr,
+      fullDayName: fullFormatter.format(date),
+      semanticLabel:
+          '${fullFormatter.format(date)}${isToday ? ' (Today)' : ''}: $durStr',
+    );
+  });
 }

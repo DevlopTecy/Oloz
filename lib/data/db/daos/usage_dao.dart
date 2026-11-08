@@ -160,6 +160,74 @@ class UsageDao extends DatabaseAccessor<AppDatabase> with _$UsageDaoMixin {
     });
   }
 
+  /// Watch daily time series for a specific app package across a list of days.
+  Stream<List<DailyUsagePoint>> watchDailySeriesForPackage(
+    String package,
+    List<String> days,
+  ) {
+    if (days.isEmpty) {
+      return Stream.value([]);
+    }
+
+    final query = select(dailyTotals)
+      ..where((tbl) => tbl.package.equals(package) & tbl.day.isIn(days));
+
+    return query.watch().map((rows) {
+      final map = <String, int>{for (final d in days) d: 0};
+      for (final row in rows) {
+        map[row.day] = (map[row.day] ?? 0) + row.foregroundMs;
+      }
+      return days
+          .map((d) => DailyUsagePoint(day: d, foregroundMs: map[d] ?? 0))
+          .toList();
+    });
+  }
+
+  /// Watch usage summary for a single app for a given day range.
+  Stream<AppUsageSummary?> watchAppSummaryForPackage({
+    required String package,
+    required String startDay,
+    required String endDay,
+  }) {
+    final query = select(dailyTotals).join([
+      innerJoin(apps, apps.package.equalsExp(dailyTotals.package)),
+    ])
+      ..where(dailyTotals.package.equals(package))
+      ..where(dailyTotals.day.isBiggerOrEqualValue(startDay))
+      ..where(dailyTotals.day.isSmallerOrEqualValue(endDay));
+
+    return query.watch().map((rows) {
+      if (rows.isEmpty) return null;
+      var totalMs = 0;
+      var totalOpens = 0;
+      var totalReels = 0;
+      String? label;
+      String? platform;
+      String? category;
+
+      for (final row in rows) {
+        final total = row.readTable(dailyTotals);
+        final app = row.readTable(apps);
+        totalMs += total.foregroundMs;
+        totalOpens += total.opens;
+        totalReels += total.reels;
+        label ??= app.label;
+        platform ??= app.platform;
+        category ??= app.category;
+      }
+
+      return AppUsageSummary(
+        package: package,
+        label: label ?? package,
+        platform: platform ?? 'android',
+        category: category ?? 'App',
+        foregroundMs: totalMs,
+        opens: totalOpens,
+        reels: totalReels,
+      );
+    });
+  }
+
   /// Insert or update an app definition.
   Future<void> upsertApp(AppsCompanion app) async {
     await into(apps).insertOnConflictUpdate(app);

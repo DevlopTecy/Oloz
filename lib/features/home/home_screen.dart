@@ -194,31 +194,76 @@ class _MobileHomeContent extends ConsumerWidget {
 
         const SizedBox(height: OlozSpacing.s16),
 
-        // Weekly chart: "This week"
-        Container(
-          padding: const EdgeInsets.all(OlozSpacing.cardPadding),
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: colors.border),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'This week',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: colors.text,
+        // Weekly chart: "This week" with interactive sideways navigation & bar inspection
+        GestureDetector(
+          onHorizontalDragEnd: (details) {
+            final vx = details.primaryVelocity ?? 0;
+            if (vx < -200 && ref.read(weekOffsetProvider) < 0) {
+              ref.read(weekOffsetProvider.notifier).nextWeek();
+            } else if (vx > 200) {
+              ref.read(weekOffsetProvider.notifier).previousWeek();
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(OlozSpacing.cardPadding),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: colors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      ref.watch(weekOffsetProvider) == 0
+                          ? 'This week'
+                          : (ref.watch(weekOffsetProvider) == -1
+                              ? 'Last week'
+                              : '${ref.watch(weekOffsetProvider).abs()} weeks ago'),
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: colors.text,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left_rounded, size: 22),
+                          padding: EdgeInsets.zero,
+                          constraints:
+                              const BoxConstraints(minWidth: 32, minHeight: 32),
+                          onPressed: () =>
+                              ref.read(weekOffsetProvider.notifier).previousWeek(),
+                          tooltip: 'Previous week',
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right_rounded, size: 22),
+                          padding: EdgeInsets.zero,
+                          constraints:
+                              const BoxConstraints(minWidth: 32, minHeight: 32),
+                          onPressed: ref.watch(weekOffsetProvider) < 0
+                              ? () => ref
+                                  .read(weekOffsetProvider.notifier)
+                                  .nextWeek()
+                              : null,
+                          tooltip: 'Next week',
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: OlozSpacing.s20),
-              WeekBars(
-                items: weekBars,
-              ),
-            ],
+                const SizedBox(height: OlozSpacing.s12),
+                WeekBars(
+                  items: weekBars,
+                  accentIndex: ref.watch(weekOffsetProvider) == 0 ? 6 : -1,
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -293,6 +338,7 @@ class _MobileHomeContent extends ConsumerWidget {
                     padding: const EdgeInsets.only(bottom: OlozSpacing.s12),
                     child: AppRow(
                       name: label,
+                      package: pkg,
                       formattedTime: OlozFormatters.formatDurationMs(ms),
                       progress: (ms / (108 * 60 * 1000)).clamp(0.05, 1.0),
                       reelsCount: reels > 0 ? reels : null,
@@ -441,7 +487,7 @@ class _DesktopHomeContent extends ConsumerWidget {
 
         const SizedBox(height: OlozSpacing.s20),
 
-        // Weekly chart card: "This week" with hover tooltips
+        // Weekly chart card: "This week" with interactive inspection
         Container(
           padding: const EdgeInsets.all(OlozSpacing.cardPadding),
           decoration: BoxDecoration(
@@ -452,18 +498,46 @@ class _DesktopHomeContent extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'This week',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: colors.text,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    ref.watch(weekOffsetProvider) == 0
+                        ? 'This week'
+                        : (ref.watch(weekOffsetProvider) == -1
+                            ? 'Last week'
+                            : '${ref.watch(weekOffsetProvider).abs()} weeks ago'),
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: colors.text,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.chevron_left_rounded, size: 22),
+                        onPressed: () =>
+                            ref.read(weekOffsetProvider.notifier).previousWeek(),
+                        tooltip: 'Previous week',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.chevron_right_rounded, size: 22),
+                        onPressed: ref.watch(weekOffsetProvider) < 0
+                            ? () =>
+                                ref.read(weekOffsetProvider.notifier).nextWeek()
+                            : null,
+                        tooltip: 'Next week',
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(height: OlozSpacing.s24),
+              const SizedBox(height: OlozSpacing.s16),
               WeekBars(
                 items: weekBars,
+                accentIndex: ref.watch(weekOffsetProvider) == 0 ? 6 : -1,
               ),
             ],
           ),
@@ -541,6 +615,7 @@ class _DesktopHomeContent extends ConsumerWidget {
                               const EdgeInsets.only(bottom: OlozSpacing.s12),
                           child: AppRow(
                             name: label,
+                            package: pkg,
                             formattedTime: OlozFormatters.formatDurationMs(ms),
                             progress: (ms / (108 * 60 * 1000)).clamp(0.05, 1.0),
                             reelsCount: reels > 0 ? reels : null,
@@ -595,6 +670,7 @@ class _DesktopHomeContent extends ConsumerWidget {
 
 List<DailyBarItem> _buildWeekBarItems(List<dynamic>? series) {
   final dayFormatter = DateFormat('E');
+  final fullFormatter = DateFormat('EEEE, MMM d');
   final now = DateTime.now();
 
   if (series == null || series.length < 7) {
@@ -605,8 +681,10 @@ List<DailyBarItem> _buildWeekBarItems(List<dynamic>? series) {
       return DailyBarItem(
         dayLabel: dayInitial,
         value: 0,
+        formattedValue: '0m',
+        fullDayName: fullFormatter.format(date),
         semanticLabel:
-            '${dayFormatter.format(date)}${isToday ? ' (Today)' : ''}: 0m',
+            '${fullFormatter.format(date)}${isToday ? ' (Today)' : ''}: 0m',
       );
     });
   }
@@ -619,11 +697,14 @@ List<DailyBarItem> _buildWeekBarItems(List<dynamic>? series) {
     final date = DateTime.tryParse(dayStr) ?? now;
     final dayInitial = dayFormatter.format(date).substring(0, 1);
     final hours = ms / (60 * 60 * 1000);
+    final durStr = OlozFormatters.formatDurationMs(ms);
 
     items.add(DailyBarItem(
       dayLabel: dayInitial,
       value: hours,
-      semanticLabel: '$dayStr: ${OlozFormatters.formatDurationMs(ms)}',
+      formattedValue: durStr,
+      fullDayName: fullFormatter.format(date),
+      semanticLabel: '${fullFormatter.format(date)}: $durStr',
     ));
   }
   return items;

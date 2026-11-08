@@ -11,4 +11,9 @@ class MainActivity : FlutterActivity() {
         val bridge = TrackingBridge(applicationContext) { activity }
         bridge.register(flutterEngine.dartExecutor.binaryMessenger)
     }
+
+    override fun onResume() {
+        super.onResume()
+        com.oloz.oloz.overlay.OverlayCounterService.hide(applicationContext)
+    }
 }

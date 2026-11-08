@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.oloz.oloz.MainActivity
+import com.oloz.oloz.R
 
 class TrackingForegroundService : Service() {
 
@@ -23,9 +24,30 @@ class TrackingForegroundService : Service() {
         const val ACTION_START = "com.oloz.oloz.action.START_TRACKING"
         const val ACTION_STOP = "com.oloz.oloz.action.STOP_TRACKING"
         const val ACTION_COLLECT_NOW = "com.oloz.oloz.action.COLLECT_NOW"
+        const val ACTION_UPDATE_STATS = "com.oloz.oloz.action.UPDATE_STATS"
 
         var isRunning: Boolean = false
             private set
+
+        var currentReels: Int = 0
+        var currentMinutes: Int = 0
+
+        fun updateStats(context: Context, reels: Int, minutes: Int) {
+            currentReels = reels
+            currentMinutes = minutes
+            val intent = Intent(context, TrackingForegroundService::class.java).apply {
+                action = ACTION_UPDATE_STATS
+                putExtra("extra_reels", reels)
+                putExtra("extra_minutes", minutes)
+            }
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     private var screenReceiver: BroadcastReceiver? = null
@@ -49,6 +71,13 @@ class TrackingForegroundService : Service() {
             }
             ACTION_COLLECT_NOW -> {
                 performQuickCollect()
+            }
+            ACTION_UPDATE_STATS -> {
+                val reels = intent?.getIntExtra("extra_reels", currentReels) ?: currentReels
+                val minutes = intent?.getIntExtra("extra_minutes", currentMinutes) ?: currentMinutes
+                currentReels = reels
+                currentMinutes = minutes
+                updateNotification()
             }
             ACTION_START -> {
                 startForegroundTracking()
@@ -95,26 +124,39 @@ class TrackingForegroundService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0)
         )
 
+        val timeFormatted = if (currentMinutes >= 60) {
+            val h = currentMinutes / 60
+            val m = currentMinutes % 60
+            if (m > 0) "${h}h ${m}m" else "${h}h"
+        } else {
+            "${currentMinutes}m"
+        }
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Oloz is active")
-            .setContentText("Calmly tracking screen time in the background")
-            .setSmallIcon(android.R.drawable.ic_menu_recent_history)
+            .setContentTitle("Oloz · R: $currentReels · T: $timeFormatted")
+            .setContentText("Screen time & reels counter running")
+            .setSmallIcon(if (applicationInfo.icon != 0) applicationInfo.icon else R.mipmap.ic_launcher)
             .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setContentIntent(pendingIntent)
             .build()
+    }
+
+    private fun updateNotification() {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        manager?.notify(NOTIFICATION_ID, buildForegroundNotification())
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Screen Time Tracking",
-                NotificationManager.IMPORTANCE_LOW
+                "Screen Time & Reels Tracking",
+                NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "Shows persistent non-intrusive status when Oloz is actively tracking foreground sessions"
-                setShowBadge(false)
+                description = "Shows live status (reels and screen time) when Oloz is running in the background"
+                setShowBadge(true)
             }
             val manager = getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)

@@ -37,6 +37,31 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _syncUsage();
+      unawaited(ref.read(trackingServiceProvider).hideOverlayCounter());
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      _syncUsage();
+      final ms = ref.read(totalTimeProvider).value ?? 0;
+      final minutes = ms ~/ (60 * 1000);
+      final reels = ref.read(totalReelsProvider).value ?? 0;
+      final tracking = ref.read(trackingServiceProvider);
+      unawaited(
+        tracking.updateTrackingNotification(
+          reels: reels,
+          minutes: minutes,
+        ),
+      );
+      unawaited(() async {
+        try {
+          final perms = await tracking.checkPermissions();
+          if (perms.overlay) {
+            await tracking.showOverlayCounter(
+              count: reels,
+              minutes: minutes,
+            );
+          }
+        } on Object catch (_) {}
+      }());
     }
   }
 
@@ -89,6 +114,31 @@ class _OlozAppState extends ConsumerState<OlozApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
+
+    // Keep background notification and overlay stats in sync with real DB data
+    ref.listen(totalTimeProvider, (_, next) {
+      final ms = next.value ?? 0;
+      final minutes = ms ~/ (60 * 1000);
+      final reels = ref.read(totalReelsProvider).value ?? 0;
+      unawaited(
+        ref.read(trackingServiceProvider).updateTrackingNotification(
+              reels: reels,
+              minutes: minutes,
+            ),
+      );
+    });
+
+    ref.listen(totalReelsProvider, (_, next) {
+      final reels = next.value ?? 0;
+      final ms = ref.read(totalTimeProvider).value ?? 0;
+      final minutes = ms ~/ (60 * 1000);
+      unawaited(
+        ref.read(trackingServiceProvider).updateTrackingNotification(
+              reels: reels,
+              minutes: minutes,
+            ),
+      );
+    });
 
     return MaterialApp.router(
       title: 'Oloz',

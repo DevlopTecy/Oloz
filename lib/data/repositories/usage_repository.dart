@@ -51,6 +51,25 @@ class UsageRepository {
     return _usageDao.watchDailySeries(days);
   }
 
+  Stream<List<DailyUsagePoint>> watchDailySeriesForPackage(
+    String package,
+    List<String> days,
+  ) {
+    return _usageDao.watchDailySeriesForPackage(package, days);
+  }
+
+  Stream<AppUsageSummary?> watchAppSummaryForPackage({
+    required String package,
+    required String startDay,
+    required String endDay,
+  }) {
+    return _usageDao.watchAppSummaryForPackage(
+      package: package,
+      startDay: startDay,
+      endDay: endDay,
+    );
+  }
+
   Future<void> recordSession({
     required String package,
     required String deviceId,

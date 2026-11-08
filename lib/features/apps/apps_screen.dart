@@ -310,6 +310,7 @@ class _MobileAppsContent extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: OlozSpacing.s16),
             child: AppRow(
               name: name,
+              package: pkg,
               formattedTime: OlozFormatters.formatDurationMs(ms),
               progress: (ms / (108 * 60 * 1000)).clamp(0.05, 1.0),
               reelsCount: reels > 0 ? reels : null,

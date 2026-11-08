@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +38,13 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 /// Native tracking service.
 final trackingServiceProvider = Provider<TrackingService>((ref) {
   return TrackingService();
+});
+
+/// Native app icon bytes provider (family by package name).
+final appIconBytesProvider =
+    FutureProvider.family<Uint8List?, String>((ref, package) async {
+  final tracking = ref.watch(trackingServiceProvider);
+  return await tracking.getAppIcon(package);
 });
 
 /// Windows Foreground Tracker provider.
@@ -152,13 +161,36 @@ final totalReelsProvider = StreamProvider<int>((ref) {
       );
 });
 
-/// 7-day daily series ending on reference date.
+/// Week offset for historical weekly chart browsing (0 = current week, -1 = last week, etc.)
+class WeekOffsetNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  void nextWeek() {
+    if (state < 0) state++;
+  }
+
+  void previousWeek() {
+    state--;
+  }
+
+  void reset() {
+    state = 0;
+  }
+}
+
+final weekOffsetProvider =
+    NotifierProvider<WeekOffsetNotifier, int>(WeekOffsetNotifier.new);
+
+/// 7-day daily series ending on reference date + week offset.
 final weekSeriesProvider = StreamProvider<List<DailyUsagePoint>>((ref) {
   final refDate = ref.watch(referenceDateProvider);
+  final offset = ref.watch(weekOffsetProvider);
+  final anchor = refDate.add(Duration(days: offset * 7));
   final fmt = DateFormat('yyyy-MM-dd');
   final days = List.generate(
     7,
-    (i) => fmt.format(refDate.subtract(Duration(days: 6 - i))),
+    (i) => fmt.format(anchor.subtract(Duration(days: 6 - i))),
   );
   return ref.watch(usageRepositoryProvider).watchDailySeries(days);
 });
@@ -202,13 +234,55 @@ final limitsProvider = StreamProvider<List<AppLimit>>((ref) {
   return ref.watch(limitRepositoryProvider).watchAllLimits();
 });
 
+/// Daily reels limit provider (defaults to 350).
+final reelsLimitProvider = StreamProvider<int>((ref) {
+  return ref
+      .watch(limitRepositoryProvider)
+      .watchLimit(scope: 'reels_total')
+      .map((limit) => limit?.dailyLimitReels ?? 350);
+});
+
+/// Daily total screen time limit provider in ms (defaults to 6 hours = 360m).
+final screenTimeLimitProvider = StreamProvider<int>((ref) {
+  return ref
+      .watch(limitRepositoryProvider)
+      .watchLimit(scope: 'total')
+      .map((limit) => limit?.dailyLimitMs ?? (6 * 60 * 60 * 1000));
+});
+
 /// Limit for a specific package.
-// ignore: specify_nonobvious_property_types
 final appLimitProvider =
     StreamProvider.family<AppLimit?, String>((ref, package) {
   return ref.watch(limitRepositoryProvider).watchLimit(
         scope: 'app',
         package: package,
+      );
+});
+
+/// Daily 7-day usage series for a specific app package ending on reference date.
+final appDailySeriesProvider =
+    StreamProvider.family<List<DailyUsagePoint>, String>((ref, package) {
+  final refDate = ref.watch(referenceDateProvider);
+  final fmt = DateFormat('yyyy-MM-dd');
+  final days = List.generate(
+    7,
+    (i) => fmt.format(refDate.subtract(Duration(days: 6 - i))),
+  );
+  return ref
+      .watch(usageRepositoryProvider)
+      .watchDailySeriesForPackage(package, days);
+});
+
+/// Usage summary for a specific app package on referenceDate (Today).
+final appDetailSummaryProvider =
+    StreamProvider.family<AppUsageSummary?, String>((ref, package) {
+  final refDate = ref.watch(referenceDateProvider);
+  final fmt = DateFormat('yyyy-MM-dd');
+  final todayStr = fmt.format(refDate);
+  return ref.watch(usageRepositoryProvider).watchAppSummaryForPackage(
+        package: package,
+        startDay: todayStr,
+        endDay: todayStr,
       );
 });
 

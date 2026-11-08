@@ -42,8 +42,32 @@ class TrackingService {
   final MethodChannel _methodChannel;
   final EventChannel _eventChannel;
   final bool? isAndroid;
+  final _iconCache = <String, Uint8List?>{};
 
   bool get _isAndroidPlatform => isAndroid ?? Platform.isAndroid;
+
+  /// Fetch native app icon PNG bytes.
+  Future<Uint8List?> getAppIcon(String package) async {
+    if (package.isEmpty) return null;
+    if (_iconCache.containsKey(package)) return _iconCache[package];
+
+    if (!_isAndroidPlatform) {
+      _iconCache[package] = null;
+      return null;
+    }
+
+    try {
+      final res = await _methodChannel.invokeMethod<Uint8List>(
+        'getAppIcon',
+        {'package': package},
+      );
+      _iconCache[package] = res;
+      return res;
+    } on PlatformException {
+      _iconCache[package] = null;
+      return null;
+    }
+  }
 
   /// Check all permission states.
   Future<TrackingPermissionsStatus> checkPermissions() async {
@@ -182,6 +206,42 @@ class TrackingService {
       return stopped ?? false;
     } on PlatformException {
       return false;
+    }
+  }
+
+  /// Update the live notification and overlay stats (R: {reels} · T: {minutes}m).
+  Future<void> updateTrackingNotification({
+    required int reels,
+    required int minutes,
+  }) async {
+    if (!_isAndroidPlatform) return;
+    try {
+      await _methodChannel.invokeMethod<void>(
+        'updateTrackingNotification',
+        {'reels': reels, 'minutes': minutes},
+      );
+    } on PlatformException {
+      // ignored
+    }
+  }
+
+  /// Get device model and OS version.
+  Future<Map<String, String>> getDeviceInfo() async {
+    if (!_isAndroidPlatform) {
+      return {
+        'model': Platform.isWindows ? 'Windows PC' : 'Local Device',
+        'os': Platform.operatingSystemVersion,
+      };
+    }
+    try {
+      final res =
+          await _methodChannel.invokeMapMethod<String, dynamic>('getDeviceInfo');
+      return {
+        'model': res?['model'] as String? ?? 'Android Device',
+        'os': res?['androidVersion'] as String? ?? 'Android',
+      };
+    } on PlatformException {
+      return {'model': 'Android Device', 'os': 'Android'};
     }
   }
 

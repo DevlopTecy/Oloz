@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
@@ -103,7 +104,9 @@ class OverlayCounterService : Service() {
             return
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+        val canDraw = Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
+        Log.d("OlozOverlay", "createAndShowOverlay called, canDrawOverlays: $canDraw")
+        if (!canDraw) {
             return
         }
 
@@ -162,15 +165,15 @@ class OverlayCounterService : Service() {
 
         // 2. Count text
         countTextView = TextView(this).apply {
-            text = currentCount.toString()
+            text = "R: $currentCount"
             setTextColor(Color.parseColor("#23262B"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             paint.isFakeBoldText = true
             val lp = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                marginEnd = dpToPx(5)
+                marginEnd = dpToPx(4)
             }
             layoutParams = lp
         }
@@ -178,9 +181,17 @@ class OverlayCounterService : Service() {
 
         // 3. Label text
         labelTextView = TextView(this).apply {
-            text = "reels"
-            setTextColor(Color.parseColor("#6E727A"))
+            val timeFormatted = if (currentMinutes >= 60) {
+                val h = currentMinutes / 60
+                val m = currentMinutes % 60
+                if (m > 0) "${h}h ${m}m" else "${h}h"
+            } else {
+                "${currentMinutes}m"
+            }
+            text = "·  T: $timeFormatted"
+            setTextColor(Color.parseColor("#5870C2"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            paint.isFakeBoldText = true
         }
         pill.addView(labelTextView)
 
@@ -203,7 +214,10 @@ class OverlayCounterService : Service() {
         try {
             wm.addView(pill, params)
             isShowing = true
-        } catch (_: Exception) {}
+            Log.d("OlozOverlay", "Overlay added successfully to WindowManager!")
+        } catch (e: Exception) {
+            Log.e("OlozOverlay", "Failed to add overlay", e)
+        }
     }
 
     private fun setupTouchListener(pill: View, params: WindowManager.LayoutParams) {
@@ -254,13 +268,20 @@ class OverlayCounterService : Service() {
     }
 
     private fun updateViews() {
-        countTextView?.text = currentCount.toString()
+        val timeFormatted = if (currentMinutes >= 60) {
+            val h = currentMinutes / 60
+            val m = currentMinutes % 60
+            if (m > 0) "${h}h ${m}m" else "${h}h"
+        } else {
+            "${currentMinutes}m"
+        }
+
+        countTextView?.text = "R: $currentCount"
+        labelTextView?.text = "·  T: $timeFormatted"
 
         if (isExpanded) {
-            labelTextView?.text = "reels · ${currentMinutes}m"
             pauseIconView?.visibility = View.VISIBLE
         } else {
-            labelTextView?.text = "reels"
             pauseIconView?.visibility = View.GONE
         }
 

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:oloz/core/theme/oloz_tokens.dart';
+import 'package:oloz/data/providers/app_providers.dart';
 
 /// Standard 36px rounded square app icon tile with 12px corner radius.
+/// Dynamically fetches and renders the real native Android APK icon when available,
+/// with an elegant branded vector fallback.
 class AppIconTile extends StatelessWidget {
   const AppIconTile({
     this.packageNameOrName = '',
@@ -19,6 +23,40 @@ class AppIconTile extends StatelessWidget {
     final colors = context.olozColors;
     final normalized = packageNameOrName.toLowerCase();
 
+    var hasScope = true;
+    try {
+      ProviderScope.containerOf(context);
+    } on Object catch (_) {
+      hasScope = false;
+    }
+
+    if (!hasScope || packageNameOrName.isEmpty) {
+      return _buildFallback(colors, normalized);
+    }
+
+    return Consumer(
+      builder: (context, ref, _) {
+        final iconBytesAsync =
+            ref.watch(appIconBytesProvider(packageNameOrName));
+        final bytes = iconBytesAsync.value;
+        if (bytes != null && bytes.isNotEmpty) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(OlozSpacing.radiusAppIcon),
+            child: Image.memory(
+              bytes,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => _buildFallback(colors, normalized),
+            ),
+          );
+        }
+        return _buildFallback(colors, normalized);
+      },
+    );
+  }
+
+  Widget _buildFallback(OlozColors colors, String normalized) {
     var bgColor = colors.surfaceMuted;
     var iconColor = colors.text;
     var iconData = icon ?? Icons.apps_rounded;

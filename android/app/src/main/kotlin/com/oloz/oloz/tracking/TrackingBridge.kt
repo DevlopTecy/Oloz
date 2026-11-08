@@ -240,6 +240,31 @@ class TrackingBridge(
                 result.success(com.oloz.oloz.overlay.OverlayCounterService.isShowing)
             }
 
+            "getAppIcon" -> {
+                val pkg = call.argument<String>("package") ?: ""
+                val bytes = usageCollector.getAppIcon(pkg)
+                result.success(bytes)
+            }
+
+            "updateTrackingNotification" -> {
+                val reels = (call.argument<Number>("reels"))?.toInt() ?: 0
+                val minutes = (call.argument<Number>("minutes"))?.toInt() ?: 0
+                TrackingForegroundService.updateStats(context, reels, minutes)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)) {
+                    com.oloz.oloz.overlay.OverlayCounterService.show(context, reels, minutes)
+                }
+                result.success(true)
+            }
+
+            "getDeviceInfo" -> {
+                result.success(
+                    mapOf(
+                        "model" to "${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL}",
+                        "androidVersion" to "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})"
+                    )
+                )
+            }
+
             else -> result.notImplemented()
         }
     }

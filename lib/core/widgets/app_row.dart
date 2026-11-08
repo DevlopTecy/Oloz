@@ -6,7 +6,9 @@ import 'package:oloz/core/widgets/app_icon_tile.dart';
 class AppRow extends StatelessWidget {
   const AppRow({
     required this.name,
-    required this.progress, String? timeFormatted,
+    required this.progress,
+    this.package,
+    String? timeFormatted,
     String? formattedTime,
     this.reelsCount,
     this.deviceTag,
@@ -16,6 +18,7 @@ class AppRow extends StatelessWidget {
   }) : timeFormatted = timeFormatted ?? formattedTime ?? '';
 
   final String name;
+  final String? package;
   final String timeFormatted;
 
   /// Progress fraction (0.0 to 1.0)
@@ -48,7 +51,7 @@ class AppRow extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  AppIconTile(packageNameOrName: name, icon: appIcon),
+                  AppIconTile(packageNameOrName: package ?? name, icon: appIcon),
                   const SizedBox(width: OlozSpacing.s12),
                   Expanded(
                     child: Column(
